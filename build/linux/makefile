@@ -1,16 +1,13 @@
 PROGRAM=pyzzlix
 CXX=g++
 
+include ../deps.mk
+
 CXXFLAGS=
 LIBPATHS=
 INCPATHS=
-LIBS=
-SOURCE=
+LIBS
 OBJECTS=
-
-SRCPATH=../../src
-
-
 
 CXXFLAGS+=-g
 
@@ -19,17 +16,12 @@ INCPATHS+=-I. -I/usr/local/include
 
 LIBS+=-lglfw -lX11 -lGL
 
-DEPS+=
-SOURCE+=main.cpp
-
-REALSOURCE = $(addprefix $(SRCPATH)/, $(SOURCE))
-OBJECTS=$(REALSOURCE: .cpp=.o)
-
+OBJECTS=$(REALSOURCE:.cpp=.o)
 
 all: $(PROGRAM)
 
 
-$(PROGRAM): $(OBJECTS) $(DEPS)
+$(PROGRAM): $(OBJECTS) $(REALDEPS)
 	$(CXX) $(CXXFLAGS) $(LIBPATHS) $(INCPATHS) $(OBJECTS) $(LIBS)  -o $(PROGRAM)
 
 
