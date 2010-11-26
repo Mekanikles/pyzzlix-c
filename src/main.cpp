@@ -48,11 +48,12 @@ int main(int argc, char** argv)
     Time lastfpsupdate = time;
     int fpscounter = 0;
     
-    double LOGICS_PER_SEC = 20.0;
+    double LOGICS_PER_SEC = 5.0;
     Time logicLength = 1.0 / LOGICS_PER_SEC;
     
     while (true)
-    {        
+    {
+        
         if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
         {
             break;
@@ -66,17 +67,15 @@ int main(int argc, char** argv)
             fpscounter = 0;
             lastfpsupdate = time;
         }
-        
+
+               
         if (time >= nextupdatetime)
         {
             while (time >= nextupdatetime)
             {
                 nextupdatetime += logicLength;
-                
                 sceneHandler->update(logicLength);
-               
                 sceneHandler->tickScenes();
-                
                 renderer->render(time - lastrendertime);
                 lastrendertime = time;
                 fpscounter += 1;
@@ -84,12 +83,11 @@ int main(int argc, char** argv)
         }
         else
         {
-            renderer->render(time - lastrendertime);
-            lastrendertime = time;
-            fpscounter += 1;
+            //renderer->render(time - lastrendertime);
+            //lastrendertime = time;
+            //fpscounter += 1;
         }
             
-        fflush(stderr);
         glfwSleep(1.0/60.0);
     }
     

@@ -3,19 +3,6 @@
 
 
 template <class T>
-class Linkable {
-public:
-	
-	T* prev;
-	T* next;
-    void* list; // type secure?
-
-	Linkable():prev(0), next(0)
-	{}
-    
-};
-
-template <class T>
 class LinkNode {
 public:
 	
@@ -50,6 +37,17 @@ public:
 	void insertPrev(T* p, T* n);
 
 	~LinkedList()
+	{}
+};
+
+template <class T>
+class Linkable {
+public:
+	T* prev;
+	T* next;
+        LinkedList<T>* list;
+
+	Linkable():prev(0), next(0)
 	{}
 };
 

@@ -9,7 +9,7 @@ class Scene_MainGame : public Scene
 {
 public:
 
-    static Scene_MainGame instance;
+    static Scene_MainGame* instance;
     static Scene_MainGame* getInstance();
 
 

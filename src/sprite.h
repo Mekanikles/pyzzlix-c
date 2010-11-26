@@ -35,7 +35,8 @@ public:
 
     void setPos(Point pos);
     void moveTo(Point pos, Time duration);
-
+    void move(Vector vec, Time duration);
+        
 };
 
 #endif

@@ -7,7 +7,7 @@ Sprite::Sprite()
 Sprite::~Sprite()
 {
     this->subSprites->destroy();
-    delete this->subSprites;
+    //delete this->subSprites;
 }
 
 
@@ -53,5 +53,12 @@ void Sprite::moveTo(Point pos, Time duration)
 {
     this->updatePos(); // <- hm, necessary?
     this->pos_ref = pos;
+    this->pos_reftime = this->currentTime + duration;
+}
+
+void Sprite::move(Vector vec, Time duration)
+{
+    this->updatePos(); // <- hm, necessary?
+    this->pos_ref = pos + vec;
     this->pos_reftime = this->currentTime + duration;
 }

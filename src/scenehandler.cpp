@@ -1,5 +1,7 @@
 #include "scenehandler.h"
 
+#include "stdio.h"
+
 #include "scene.h"
 
 SceneHandler SceneHandler::instance;
@@ -15,24 +17,22 @@ SceneHandler::SceneHandler()
 }
 SceneHandler::~SceneHandler()
 {
-
-    this->sceneStack->destroy();
     delete this->sceneStack;
-
 }
 
 Scene* SceneHandler::getDeepestRenderedScene()
 {
-
+    Scene* deepest = NULL;
     Scene* s = this->sceneStack->first;
     while (s != NULL)
-    {   
+    {
+        deepest = s;
         if (s->isRenderBlocker())
-            break;
-            
+            return deepest;
+
         s = s->next;
     }
-    return s;
+    return deepest;
 }
 
 void SceneHandler::pushScene(Scene* scene)
@@ -57,7 +57,7 @@ void SceneHandler::update(Time deltaTime)
 
     Scene* s = this->sceneStack->first;
     while (s != NULL)
-    {   
+    {
         if (!blocked)
         {
             s->update(deltaTime);

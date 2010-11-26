@@ -3,16 +3,18 @@
 #include "GL/gl.h"
 #include "GL/glfw.h"
 
+#include "stdio.h"
+
 #include "scenehandler.h"
 #include "point.h"
 #include "sprite.h"
 #include "image.h"
 #include "scene.h"
 
-Renderer Renderer::instance;
 Renderer* Renderer::getInstance()
 {
-    return &Renderer::instance;
+    static Renderer instance;
+    return &instance;
 }
 
 Renderer::Renderer()
@@ -86,6 +88,8 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
     double px = p.x - sprite->center.x;
     double py = p.y - sprite->center.y;
     Image* img = sprite->currentImage;
+
+    fprintf(stderr, "sprite coords: (%f, %f)\n", p.x, p.y);
     
     glBegin(GL_QUADS);
     {
@@ -106,6 +110,8 @@ void Renderer::renderScene(Scene* scene)
     if (!scene->blockedThisTick)
         scene->renderTime += this->deltaTime;
 
+    fprintf(stderr, "rendertime: %f\n", scene->renderTime);
+    
     Sprite* s = scene->sprites->first;
     while(s != NULL)
     {
@@ -124,7 +130,7 @@ void Renderer::render(Time deltaTime)
       
     Scene* s = SceneHandler::getInstance()->getDeepestRenderedScene();
     while (s != NULL)
-    {   
+    {
         this->renderScene(s);
             
         s = s->prev;

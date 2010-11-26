@@ -1,4 +1,6 @@
 #include "stdlib.h"
+#include "stdio.h"
+
 
 template <class T>
 void LinkedList<T>::addItemLast(T* p)
@@ -86,7 +88,7 @@ T* LinkedList<T>::releaseItem(T* p)
 	p->prev = 0;
 	p->next = 0;
 
-    p->list = NULL;
+        p->list = NULL;
     
 	return p;
 }

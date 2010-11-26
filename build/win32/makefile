@@ -34,5 +34,3 @@ $(PROGRAM): $(OBJECTS) $(REALDEPS)
 
 clean:
 	rm -f $(OBJECTS) $(PROGRAM)
-
-   

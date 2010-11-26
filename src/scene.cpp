@@ -20,6 +20,7 @@ void Scene::update(Time deltaTime)
     while (s != NULL)
     {
         s->update(this->currentTime);
+        s = s->next;
     }
 }
 

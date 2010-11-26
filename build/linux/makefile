@@ -6,7 +6,7 @@ include ../deps.mk
 CXXFLAGS=
 LIBPATHS=
 INCPATHS=
-LIBS
+LIBS=
 OBJECTS=
 
 CXXFLAGS+=-g
@@ -21,10 +21,12 @@ OBJECTS=$(SOURCE:.cpp=.o)
 all: $(PROGRAM)
 
 
-$(PROGRAM): $(OBJECTS) $(REALDEPS)
+$(PROGRAM): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(LIBPATHS) $(INCPATHS) $(OBJECTS) $(LIBS)  -o $(PROGRAM)
 
 
-%.o: $(SRCPATH)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCPATHS) -c $> -o $@
+%.o: $(SRCPATH)/%.cpp  $(REALDEPS)
+	$(CXX) $(CXXFLAGS) $(INCPATHS) -c $< -o $@
 
+clean:
+	rm -f $(OBJECTS) $(PROGRAM)

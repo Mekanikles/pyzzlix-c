@@ -26,7 +26,7 @@ struct Point : public Vector
     }
     Vector operator-(const Point& p)
     {
-        return Vector(this->x - p.x, this->y - p.x);       
+        return Vector(this->x - p.x, this->y - p.y);       
     }
 
 
