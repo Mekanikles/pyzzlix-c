@@ -8,3 +8,4 @@ configure
 src/.deps/
 src/pyzzlix
 stamp-h1
+config/
