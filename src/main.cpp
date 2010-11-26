@@ -4,6 +4,7 @@
 
 #include "GL/glfw.h"
 #include "stdio.h"
+#include "stdlib.h"
 
 #include "time.h"
 #include "renderer.h"
@@ -88,6 +89,7 @@ int main(int argc, char** argv)
             fpscounter += 1;
         }
             
+        fflush(stderr);
         glfwSleep(1.0/60.0);
     }
     
