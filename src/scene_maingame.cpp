@@ -34,6 +34,9 @@ Scene_MainGame::Scene_MainGame():
     
     this->sprites->addItem(s1);
     this->sprites->addItem(s2);
+    
+    s1->moveTo(Point(1200, 700), 5.0);
+    s2->moveTo(Point(1200, 700), 5.0);
 }
 Scene_MainGame::~Scene_MainGame()
 {
@@ -42,15 +45,9 @@ Scene_MainGame::~Scene_MainGame()
 
 void Scene_MainGame::tick()
 {
-    Point pos = s1->calcPos(this->currentTime);
-    Point pos2 = s2->calcPos(this->currentTime);
-    Vector vec = Point(160, 120) - s1->calcPos(this->currentTime);
-    fprintf(stderr, "s1 pos: (%f, %f)\n", pos.x, pos.y);
-    fprintf(stderr, "s2 pos: (%f, %f)\n", pos2.x, pos2.y);
 
-    
-    s1->move(vec, 1.0);
-    //s2->move(Point(160, 120) - s1->calcPos(this->currentTime) * 2.5, 1.0);
+    //fprintf(stderr, "Maingame.currenttime: %f\n", this->currentTime);
+    //fprintf(stderr, "Maingame.rendertime: %f\n", this->renderTime);
     
 }
 

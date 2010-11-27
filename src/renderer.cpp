@@ -89,8 +89,6 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
     double py = p.y - sprite->center.y;
     Image* img = sprite->currentImage;
 
-    fprintf(stderr, "sprite coords: (%f, %f)\n", p.x, p.y);
-    
     glBegin(GL_QUADS);
     {
         //glTexCoord2f(i.tCoords[0], i.tCoords[1])
@@ -110,7 +108,7 @@ void Renderer::renderScene(Scene* scene)
     if (!scene->blockedThisTick)
         scene->renderTime += this->deltaTime;
 
-    fprintf(stderr, "rendertime: %f\n", scene->renderTime);
+    //fprintf(stderr, "rendertime: %f\n", scene->renderTime);
     
     Sprite* s = scene->sprites->first;
     while(s != NULL)

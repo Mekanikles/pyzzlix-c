@@ -26,7 +26,6 @@ Point Sprite::calcPos(Time currentTime)
         double factorT = (this->pos_reftime - currentTime) / (this->pos_reftime - this->pos_lasttime);
         return this->pos_ref - (this->pos_ref - this->pos) * factorT;
     }
-
 }
 void Sprite::updatePos()
 {
