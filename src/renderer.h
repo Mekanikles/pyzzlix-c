@@ -35,6 +35,8 @@ public:
     void drawSprite(Sprite* sprite, Time currentTime);
     void renderScene(Scene* scene);
     void render(Time deltaTime);
+    
+    void loadTexture(Texture texture
 };
 
 #endif
