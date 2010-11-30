@@ -1,7 +1,6 @@
 #ifndef _SCENE_H
 #define _SCENE_H
 
-
 #include "linkedlist.h"
 #include "time.h"
 

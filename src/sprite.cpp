@@ -1,11 +1,14 @@
 #include "sprite.h"
-    
+
+#include <stdio.h>
+
 Sprite::Sprite()
 {
     this->subSprites = new LinkedList<Sprite>();
 }
 Sprite::~Sprite()
 {
+    fprintf(stderr, "Sprites destructor!\n");
     //this->subSprites->destroy();
     //delete this->subSprites;
 }

@@ -38,7 +38,10 @@ Scene* SceneHandler::getDeepestRenderedScene()
 void SceneHandler::pushScene(Scene* scene)
 {
     if (scene->list != NULL)
+    {
+        fprintf(stderr, "Removed scene before push\n");
         ((LinkedList<Scene>*)(scene->list))->releaseItem(scene);
+    }
         
     this->sceneStack->addItem(scene);
 }

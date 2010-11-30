@@ -5,12 +5,13 @@
 
 class Sprite;
 class Scene;
+class Texture;
 
 class Renderer
 {
-
+        
 public:
-
+        
     bool fullscreen;
     const char* title;
     Time deltaTime;
@@ -35,8 +36,8 @@ public:
     void drawSprite(Sprite* sprite, Time currentTime);
     void renderScene(Scene* scene);
     void render(Time deltaTime);
-    
-    void loadTexture(Texture texture
+        
+    void loadTexture(Texture* texture);
 };
 
 #endif

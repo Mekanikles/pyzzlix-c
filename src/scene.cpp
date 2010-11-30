@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "scene.h"
 
 #include "sprite.h"

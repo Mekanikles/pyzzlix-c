@@ -19,7 +19,7 @@ public:
 
 private:
         
-    Board* board;
+        //Board* board;
 };
 
 

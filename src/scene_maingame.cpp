@@ -35,9 +35,10 @@ Scene_MainGame::Scene_MainGame():
     
     this->sprites->addItem(s1);
     this->sprites->addItem(s2);
-
-    this->board = new Board();
-    this->sprites->addItem(this->board);
+        
+    Board* board = new Board();
+    board->setImage(i);
+    this->sprites->addItem(board);
     
     s1->moveTo(Point(1200, 700), 5.0);
     s2->moveTo(Point(1200, 700), 5.0);

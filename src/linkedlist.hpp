@@ -1,6 +1,9 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+#include "linkedlist.h"
+#include "sprite.h"
+#include "scene.h"
 
 template <class T>
 void LinkedList<T>::addItemLast(T* p)
@@ -37,18 +40,18 @@ void LinkedList<T>::addItem(T* p)
 template <class T>
 void LinkedList<T>::deleteItem(T* p)
 {
-	bool isfirst = (p->prev == 0);
-	bool islast = (p->next == 0);
-	if (islast) {
+    bool isfirst = (p->prev == 0);
+    bool islast = (p->next == 0);
+
+    if (islast) {
         if (isfirst) {
             first = 0;
-			last =0;
+            last = 0;
         } else {
-			last = p->prev;
+            last = p->prev;
             p->prev->next = 0;
-			
         }
-	} else {
+    } else {
         if (isfirst) {
             first = p->next;
             first->prev = 0;
@@ -56,9 +59,9 @@ void LinkedList<T>::deleteItem(T* p)
             p->prev->next = p->next;
             p->next->prev = p->prev;
         }
-	}
-
-	delete p;
+    }
+    
+    delete p;
 }
 
 template <class T>
