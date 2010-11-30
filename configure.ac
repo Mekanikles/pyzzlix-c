@@ -61,7 +61,7 @@ AC_GLFW_DEVEL([2.6.0])
 
 # Append Python and GLFW flags to default flags
 LIBS="$LIBS $GLFW_LIBS $GLEW_LIBS $PYTHON_LIBS"
-CFLAGS="$CFLAGS $GLFW_CFLAGS $GLEW_CFLAGS $PYTHON_CFLAGS -Wall -g -O0"  #-Werror=implicit-function-declaration"
+CPPFLAGS="$CFLAGS $GLFW_CFLAGS $GLEW_CFLAGS $PYTHON_CFLAGS -Wall"  #-Werror=implicit-function-declaration"
 LDFLAGS="$LDFLAGS $GLFW_LDFLAGS $GLEW_LDFLAGS $PYTHON_LDFLAGS"
 
 AM_PROG_CC_C_O

@@ -9,7 +9,7 @@ public:
 	LinkNode* prev;
 	LinkNode* next;
 
-	T* object;
+	T* item;
 
 	LinkNode():prev(0), next(0)
 	{}

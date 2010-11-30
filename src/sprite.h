@@ -26,7 +26,7 @@ public:
     Time pos_reftime;
        
     Sprite();
-    virtual ~Sprite();
+        /*virtual*/ ~Sprite();
 
     void setImage(Image* image);
     Point calcPos(Time currentTime);

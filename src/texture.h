@@ -1,9 +1,12 @@
 #ifndef _TEXTURE_H
 #define _TEXTURE_H
 
+#include <string>
+
+
 struct Texture
 {
-    const char* filename;
+    string filename;
     int texID;
     int width;
     int height;
@@ -21,7 +24,7 @@ struct Texture
     }
 
 
-    Texture(const char* filename):
+    Texture(string filename):
         filename(filename)
     {
         this->updateData(-1, 1, 1);

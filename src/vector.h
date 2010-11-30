@@ -1,6 +1,7 @@
 #ifndef _VECTOR_H
 #define _VECTOR_H
 
+#include "linkedlist.h"
 
 class Point;
 

@@ -37,7 +37,6 @@ public:
     void renderScene(Scene* scene);
     void render(Time deltaTime);
         
-    void loadTexture(Texture* texture);
 };
 
 #endif
