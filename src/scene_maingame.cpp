@@ -23,7 +23,8 @@ Scene_MainGame::Scene_MainGame():
     this->renderBlocker = false;
     this->updateBlocker = false;
     
-    Texture* t = new Texture("Whatever.png");
+    Texture* t = new Texture("blocks");
+    
     Image* i = new Image(t, 0, 0, 32, 32);
     s1 = new Sprite();
     s2 = new Sprite();
@@ -34,10 +35,13 @@ Scene_MainGame::Scene_MainGame():
     
     this->sprites->addItem(s1);
     this->sprites->addItem(s2);
+
+    this->board = new Board();
+    this->sprites->addItem(this->board);
 }
+
 Scene_MainGame::~Scene_MainGame()
 {
-
 }
 
 void Scene_MainGame::tick()

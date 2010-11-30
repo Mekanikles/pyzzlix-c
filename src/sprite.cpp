@@ -6,7 +6,7 @@ Sprite::Sprite()
 }
 Sprite::~Sprite()
 {
-    this->subSprites->destroy();
+    //this->subSprites->destroy();
     //delete this->subSprites;
 }
 

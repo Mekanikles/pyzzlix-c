@@ -9,4 +9,4 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 bin_PROGRAMS = pyzzlix
-pyzzlix_SOURCES = image.h linkedlist.h  linkedlist.hpp  main.cpp   point.h  renderer.cpp  renderer.h  scene.cpp  scene.h  scenehandler.cpp  scenehandler.h  scene_maingame.cpp scene_maingame.h  sprite.cpp    sprite.h        texture.h  time.h       vector.h
+pyzzlix_SOURCES = image.h linkedlist.h linkedlist.hpp main.cpp point.h renderer.cpp renderer.h scene.cpp scene.h scenehandler.cpp scenehandler.h scene_maingame.cpp scene_maingame.h sprite.cpp sprite.h texture.h time.h vector.h board.cpp board.h

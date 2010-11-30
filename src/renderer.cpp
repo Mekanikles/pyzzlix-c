@@ -90,19 +90,22 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
     Image* img = sprite->currentImage;
 
     fprintf(stderr, "sprite coords: (%f, %f)\n", p.x, p.y);
-    
-    glBegin(GL_QUADS);
-    {
-        //glTexCoord2f(i.tCoords[0], i.tCoords[1])
-        glVertex2f(px, py);
-        //glTexCoord2f(i.tCoords[2], i.tCoords[3])
-        glVertex2f(px, img->height + py);
-        //glTexCoord2f(i.tCoords[4], i.tCoords[5])
-        glVertex2f(img->width + px, img->height + py);
-        //glTexCoord2f(i.tCoords[6], i.tCoords[7])
-        glVertex2f(img->width  + px, py);
+
+    if(NULL != sprite->currentImage)
+    {    
+        glBegin(GL_QUADS);
+        {
+            //glTexCoord2f(i.tCoords[0], i.tCoords[1]);
+            glVertex2f(px, py);
+            //glTexCoord2f(i.tCoords[2], i.tCoords[3]);
+            glVertex2f(px, img->height + py);
+            //glTexCoord2f(i.tCoords[4], i.tCoords[5]);
+            glVertex2f(img->width + px, img->height + py);
+            //glTexCoord2f(i.tCoords[6], i.tCoords[7]);
+            glVertex2f(img->width  + px, py);
+        }
+        glEnd();
     }
-    glEnd();
 }
 
 void Renderer::renderScene(Scene* scene)

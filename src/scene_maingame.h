@@ -1,9 +1,8 @@
 #ifndef _SCENE_MAINGAME_H
 #define _SCENE_MAINGAME_H
 
-
-
 #include "scene.h"
+#include "board.h" // has: Board
 
 class Scene_MainGame : public Scene
 {
@@ -18,6 +17,9 @@ public:
     
     void tick(); 
 
+private:
+        
+    Board* board;
 };
 
 
