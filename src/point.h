@@ -22,7 +22,7 @@ struct Point : public Vector
     }
     Point operator-(const Vector& v)
     {
-        return Point(this->x + v.x, this->y + v.y);       
+        return Point(this->x - v.x, this->y - v.y);       
     }
     Vector operator-(const Point& p)
     {

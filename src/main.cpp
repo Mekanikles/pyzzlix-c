@@ -21,7 +21,7 @@ bool init()
 
     glfwInit();
     
-    renderer->init("Pyzzlix", 320, 240, false);
+    renderer->init("Pyzzlix", 1280, 720, false);
     sceneHandler->pushScene(scene_maingame);
     
     return true;
@@ -44,6 +44,7 @@ int main(int argc, char** argv)
     Time time = glfwGetTime();
     
     Time nextupdatetime = time;
+    Time lastupdatetime = time;
     Time lastrendertime = time;
     Time lastfpsupdate = time;
     int fpscounter = 0;
@@ -73,22 +74,27 @@ int main(int argc, char** argv)
         {
             while (time >= nextupdatetime)
             {
-                nextupdatetime += logicLength;
-                sceneHandler->update(logicLength);
+                sceneHandler->update(nextupdatetime - lastupdatetime);
+                lastupdatetime = nextupdatetime;
+           
                 sceneHandler->tickScenes();
-                renderer->render(time - lastrendertime);
+                renderer->render(0);
                 lastrendertime = time;
+
+                nextupdatetime += logicLength;
                 fpscounter += 1;
             }
         }
         else
         {
-            //renderer->render(time - lastrendertime);
-            //lastrendertime = time;
-            //fpscounter += 1;
+            renderer->render(time - lastrendertime);
+            lastrendertime = time;
+            fpscounter += 1;
         }
             
-        glfwSleep(1.0/60.0);
+            
+        fflush(stderr);    
+        //glfwSleep(1.0/60.0);
     }
     
     
