@@ -1,27 +1,14 @@
 #include "resources.h"
 
 #include <string>
-#include <hash_map>
+#include "labelmap.h"
 
 #include "lodepng/lodepng.h"
+#include "texture.h"
 
 using namespace std;
 
-struct imageFile
-{
-    unsigned char* buffer;
-    unsigned int buffersize;
-
-    unsigned char* data;
-        
-    unsigned int width;
-    unsigned int size;
-    unsigned int height;
-    unsigned int channels;    
-};
-
-
-static hash_map<string, Texture*> textures;
+static LabelMap<Texture> textures;
 
 static imageFile* loadImageFile(const char* filename)
 {   
@@ -36,10 +23,10 @@ static imageFile* loadImageFile(const char* filename)
     }
 
     fseek(file, 0, SEEK_END);
-    int filelen = ftell(file);
+    unsigned int filelen = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    buffer = new (unsigned char)[filelen];
+    buffer = new unsigned char[filelen];
     
     if (fread(buffer, 1, filelen, file) != filelen)
     {
@@ -56,33 +43,43 @@ static imageFile* loadImageFile(const char* filename)
     
     LodePNG_Decoder decoder;
     LodePNG_Decoder_init(&decoder);
-    LodePNG_decode(&decoder, &imgfile.data, &imgfile.size, buffer, buffersize);
+    LodePNG_decode(&decoder, &imgfile->data, &imgfile->size, buffer, buffersize);
 
     if(decoder.error)
     {
-        ERROR("PNG decoding failed for file %s, error: %d\n", filename, decoder.error);
+        fprintf(stderr, "PNG decoding failed for file %s, error: %d\n", filename, decoder.error);
         delete imgfile;
         return NULL;
     }
 
-    imgfile.width = decoder.infoPng.width;
-    imgfile.height = decoder.infoPng.height;
-    imgfile.channels = LodePNG_InfoColor_getChannels(&decoder.infoPng.color);
-
+    imgfile->width = decoder.infoPng.width;
+    imgfile->height = decoder.infoPng.height;
+    imgfile->channels = LodePNG_InfoColor_getChannels(&decoder.infoPng.color);
+    
     LodePNG_Decoder_cleanup(&decoder);
-   
+
+    delete[] buffer;
+    
     return imgfile;    
 }
 
-
-bool resources::loadTexture(Texture* texture)
+Resources* Resources::getInstance()
 {
+    static Resources instance;
+    return &instance;
+}
+
+bool Resources::loadTexture(Texture* texture)
+{
+    if (texture == NULL)
+        return false;
+    
     imageFile* img;
     
-    img = loadImageFile(texture.fullname);
+    img = loadImageFile(texture.filename);
     if (img == NULL)
     {
-        fprintf(stderr, "Could not load texture from file %s.", texture.fullname);
+        fprintf(stderr, "Could not load texture from file %s.", texture->fullname);
         return false;
     }
         
@@ -93,24 +90,44 @@ bool resources::loadTexture(Texture* texture)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    texture.updateData(texID, img->width, img->height);
-
-    delete[] img->data;
-    delete[] img->buffer;
-    delete img;
+    texture->updateData(texID, img);
     
     return true;
 }
 
-Texture* resources::getTexture(const char* name)
+bool Resources::reloadTexture(Texture* texture)
+{
+    if (texture == NULL)
+        return;
+    
+    if (texture->img != NULL)
+        texture->img = loadImageFile(texture.fullname);
+    
+    if (texture->img == NULL)
+    {
+        fprintf(stderr, "Could not load texture from file %s.", texture->fullname);
+        return false;
+    }
+        
+    int texID = glGenTextures(1);
+    
+    glBindTexture(GL_TEXTURE_2D, &texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->img->width, texture->img->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->img->data);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    
+    return true;
+}
+
+Texture* Resources::getTexture(const char* name)
 {
     string path = string(name);
     path = string("\\data\\") + name;
 
-    bool exists = textures.exist(name);
+    bool exists = textures.exists(name);
     if (exists)
     {
-        return textures[path];
+        return textures.get(name);
     }
     else
     {
@@ -120,12 +137,12 @@ Texture* resources::getTexture(const char* name)
             delete t;
             return false;
         }
-        textures[path] = t;
+        textures.set(name, t);
         return t;
     }
 }
 
-Image* resources::loadImage(const char* texturename, srcx = 0, srcy = 0, srcw = NULL, srch = NULL)
+Image* Resources::loadImage(const char* texturename, srcx = 0, srcy = 0, srcw = NULL, srch = NULL)
 {
     Texture t = getTexture[texturename];
     if (t == NULL)
@@ -137,18 +154,34 @@ Image* resources::loadImage(const char* texturename, srcx = 0, srcy = 0, srcw = 
 }
 
 
-void resources::unloadAllTextures()
+void Resources::unloadAllTextures()
 {
-    
-    hash_map<string, Texture*>::iterator endIter = hashMap.end();
-    for (hash_map<string, Texture*>::iterator iter = hashMap.begin(); iter != endIter; ++iter)
+    LabelItem<Texture>* i = textures.list.first;
+    while (i != NULL)
     {
-        iter->first // TODO, fix;
+        if (i->item != NULL && i->item->texID != -1)
+        {
+            glDeleteTextures(i->item->texID);
+            i->item->texID = -1;
+        }
+
+        i = i->next;
     }
 }
 
-    for t in textures:
-    glDeleteTextures(textures[t].texID);
+void Resources::loadAllTextures()
+{
+    LabelItem<Texture>* i = textures.list.first;
+    while (i != NULL)
+    {
+        if (i->item != NULL && i->item->texID == -1)
+        {
+            if (!this->loadTexture(i->item))
+            {
+                fprintf(stderr, "Could not load Texture %s!\n", i->item->filename);
+            }
+        }
 
-    
+        i = i->next;
+    }
 }

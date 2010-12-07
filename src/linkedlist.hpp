@@ -2,8 +2,6 @@
 #include "stdio.h"
 
 #include "linkedlist.h"
-#include "sprite.h"
-#include "scene.h"
 
 template <class T>
 void LinkedList<T>::addItemLast(T* p)

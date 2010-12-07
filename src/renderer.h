@@ -18,8 +18,6 @@ public:
     int width;
     int height;
     
-    
-    static Renderer instance;
     static Renderer* getInstance();
 
 
