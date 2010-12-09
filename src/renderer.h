@@ -17,6 +17,7 @@ public:
     Time deltaTime;
     int width;
     int height;
+    int currentTexID;
     
     static Renderer* getInstance();
 

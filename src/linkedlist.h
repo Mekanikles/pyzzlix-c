@@ -4,7 +4,7 @@
 
 template <class T>
 class LinkNode {
-public:
+    public:
 	
 	LinkNode* prev;
 	LinkNode* next;
@@ -18,8 +18,8 @@ public:
 template <class T>
 class LinkedList {
 
-public:
-
+    public:
+        
 	T* last;	
 	T* first;
 	
@@ -42,13 +42,15 @@ public:
 
 template <class T>
 class Linkable {
-public:
-	T* prev;
+    public:
+        T* prev;
 	T* next;
         LinkedList<T>* list;
-
+        
 	Linkable():prev(0), next(0)
 	{}
+        
+        virtual ~Linkable() {}
 };
 
 

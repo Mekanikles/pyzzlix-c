@@ -5,7 +5,7 @@
 
 using namespace std;
 
-struct imageFile
+struct ImageFile
 {
     unsigned char* data;
         
@@ -17,8 +17,8 @@ struct imageFile
 
 struct Texture
 {
-    string filename;
-    imageFile* img;      
+    string name;
+    ImageFile* img;      
     int texID;
     int width;
     int height;
@@ -26,18 +26,24 @@ struct Texture
     float ph;
 
 
-    void updateData(int texID, imageFile* img)
+    void updateData(int texID, ImageFile* img)
     {
         this->img = img;
         this->texID = texID;
-        this->width = width;
-        this->height = height;
-        this->pw = 1.0/(float)this->width;
-        this->ph = 1.0/(float)this->height;      
+        if (img != NULL)
+        {
+            this->pw = 1.0/(float)this->img->width;
+            this->ph = 1.0/(float)this->img->height;
+        }
+        else
+        {
+            this->pw = 1.0;
+            this->ph = 1.0;
+        }
     }
 
-    Texture(string filename):
-        filename(filename)
+    Texture(string name):
+        name(name)
     {
         this->updateData(-1, NULL);
     }

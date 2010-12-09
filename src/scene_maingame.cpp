@@ -2,9 +2,13 @@
 
 #include "stdio.h"
 
+#include "resources.h"
+
 #include "texture.h"
 #include "sprite.h"
 #include "image.h"
+
+#include "constants.h"
 
 Sprite* s1;
 Sprite* s2;
@@ -23,7 +27,7 @@ Scene_MainGame::Scene_MainGame():
     this->renderBlocker = false;
     this->updateBlocker = false;
     
-    Texture* t = new Texture("blocks");
+    Texture* t = Resources::getInstance()->getTexture("blocks");
     
     Image* i = new Image(t, 0, 0, 32, 32);
     s1 = new Sprite();
@@ -36,7 +40,7 @@ Scene_MainGame::Scene_MainGame():
     this->sprites->addItem(s1);
     this->sprites->addItem(s2);
         
-    Board* board = new Board();
+    Board* board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
     board->setImage(i);
     this->sprites->addItem(board);
     
@@ -51,9 +55,7 @@ Scene_MainGame::~Scene_MainGame()
 
 void Scene_MainGame::tick()
 {
-
     //fprintf(stderr, "Maingame.currenttime: %f\n", this->currentTime);
-    //fprintf(stderr, "Maingame.rendertime: %f\n", this->renderTime);
-    
+    //fprintf(stderr, "Maingame.rendertime: %f\n", this->renderTime);   
 }
 

@@ -8,9 +8,8 @@ Sprite::Sprite()
 }
 Sprite::~Sprite()
 {
-    fprintf(stderr, "Sprites destructor!\n");
-    //this->subSprites->destroy();
-    //delete this->subSprites;
+    this->subSprites->destroy();
+    delete this->subSprites;
 }
 
 

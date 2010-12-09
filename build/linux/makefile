@@ -1,4 +1,4 @@
-PROGRAM=pyzzlix
+PROGRAM=$(ROOTPATH)/bin/pyzzlix
 CXX=g++
 
 include ../deps.mk
@@ -16,7 +16,7 @@ INCPATHS+=-I. -I/usr/local/include
 
 LIBS+=-lglfw -lX11 -lGL
 
-OBJECTS=$(SOURCE:.cpp=.o)
+OBJECTS=$(REALSOURCE:.cpp=.o)
 
 all: $(PROGRAM)
 
@@ -25,7 +25,7 @@ $(PROGRAM): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(LIBPATHS) $(INCPATHS) $(OBJECTS) $(LIBS)  -o $(PROGRAM)
 
 
-%.o: $(SRCPATH)/%.cpp  $(REALDEPS)
+%.o: %.cpp  $(REALDEPS)
 	$(CXX) $(CXXFLAGS) $(INCPATHS) -c $< -o $@
 
 clean:

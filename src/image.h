@@ -2,6 +2,7 @@
 #define _IMAGE_H
 
 #include "texture.h"
+#include "stdlib.h"
 
 struct Image
 {
@@ -19,10 +20,14 @@ struct Image
         this->srcy = srcy;
         this->width = width;
         this->height = height;
-        this->tx1 = this->srcx * this->texture->pw;
-        this->ty1 = this->srcy * this->texture->ph;
-        this->tx2 = (this->srcx + this->width) * this->texture->pw;
-        this->ty1 = (this->srcy + this->height) * this->texture->ph;
+
+        if (texture != NULL)
+        {
+            this->tx1 = this->srcx * this->texture->pw;
+            this->ty1 = this->srcy * this->texture->ph;
+            this->tx2 = (this->srcx + this->width) * this->texture->pw;
+            this->ty2 = (this->srcy + this->height) * this->texture->ph;
+        }
     }
 };
 
