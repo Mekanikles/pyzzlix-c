@@ -1,10 +1,15 @@
 #include "sprite.h"
 
 #include <stdio.h>
+#include "animation.h"
+
 
 Sprite::Sprite()
 {
     this->subSprites = new LinkedList<Sprite>();
+    this->currentAnimation = NULL;
+    this->currentImage = NULL;
+        
 }
 Sprite::~Sprite()
 {
@@ -17,6 +22,14 @@ void Sprite::setImage(Image* image)
 {
     this->currentImage = image;
 }
+
+void Sprite::setAnimation(Animation* animation)
+{
+    animation->reset(this->currentTime);
+    this->currentAnimation = animation;
+    this->currentImage = animation->getFrameImage(this->currentTime);
+}
+
 Point Sprite::calcPos(Time currentTime)
 {
     if (this->pos_reftime <= currentTime)

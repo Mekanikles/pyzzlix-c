@@ -4,6 +4,10 @@
 
 #include <stdio.h>
 
+#include "resources.h"
+#include "marker.h"
+#include "block.h"
+
 static double triangleArea(Point* a, Point* b, Point* c)
 {  
     return (b->x - a->x) * (c->y - a->y) - (c->x - a->x) * (b->y - a->y);
@@ -38,33 +42,32 @@ Board::Board(int width, int height) : Sprite(),
     this->reset();
     
     this->background = new Sprite();
-    this->background->setImage(loadImage("pixel", 1, 1));
-    this->background->setScale(Point(160.0, 208.0));
-    this->background->setColor(Color(0.0, 0.0, 0.0, 0.3));
+    this->background->setImage(Resources::getInstance()->loadImage("pixel", 1, 1));
+    //this->background->setScale(Point(160.0, 208.0));
+    //this->background->setColor(Color(0.0, 0.0, 0.0, 0.3));
     this->background->setPos(Point(8.0, 16.0));
         
     this->blockcontainer = new Sprite();
     this->blockcontainer->setPos(Point(8.0, 16.0));
     
     this->border = new Sprite();
-    this->border.setImage(loadImage("windowframes.png", 24, 0, 176, 232));
-    this->border.setPos(Point(0.0,0.0));
+    this->border->setImage(Resources::getInstance()->loadImage("windowframes.png", 24, 0, 176, 232));
+    this->border->setPos(Point(0.0,0.0));
         
     this->glow = new Sprite();
-    this->glow.setImage(loadImage("windowglows.png", 24, 0, 176, 232));
-    this->glow.setPos(Point(0.0, 0.0));
-    this->glow.setCol(Color(0.0, 0.0, 0.0, 0.0));
+    this->glow->setImage(Resources::getInstance()->loadImage("windowglows.png", 24, 0, 176, 232));
+    this->glow->setPos(Point(0.0, 0.0));
+    //this->glow.setCol(Color(0.0, 0.0, 0.0, 0.0));
         
     this->marker = new Marker();
-    this->marker->offset_x = this->blocks->pos.x;
-    this->marker->offset_y = this->blocks->pos.y;
+    this->marker->setOffset(this->blockcontainer->pos);
     this->marker->moveToBoardCoord(2, 14, this->currentTime);
         
-    this->subSprites.addItem(this->background);
-    this->subSprites.addItem(this->blockcontainer);
-    this->subSprites.addItem(this->marker);
-    this->subSprites.addItem(this->border);
-    this->subSprites.addItem(this->glow);
+    this->subSprites->addItem(this->background);
+    this->subSprites->addItem(this->blockcontainer);
+    this->subSprites->addItem(this->marker);
+    this->subSprites->addItem(this->border);
+    this->subSprites->addItem(this->glow);
 }
 
 /*virtual*/ Board::~Board()
@@ -75,7 +78,7 @@ Board::Board(int width, int height) : Sprite(),
 void Board::reset()
 {
     this->grid.clear();
-    this->blockcontainer->subSprites.destroy();
+    this->blockcontainer->subSprites->destroy();
 
     this->lastRotated.release();
 }

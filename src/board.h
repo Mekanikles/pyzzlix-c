@@ -11,10 +11,12 @@
 
 class Scene;
 class Sprite;
+class Marker;
+class Block;
 
 class Board : public Sprite
 {
-        Grid<Sprite> grid;
+        Grid<Block> grid;
         int width;
         int height;
 
@@ -22,7 +24,7 @@ class Board : public Sprite
         Sprite* blockcontainer;
         Sprite* border;
         Sprite* glow;
-        Sprite* marker;
+        Marker* marker;
 
         bool blocksFalling;
         Color glowColor;

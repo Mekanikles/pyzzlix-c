@@ -16,7 +16,10 @@ public:
         
     bool loadTexture(Texture* texture);
     Texture* getTexture(const string& name);
-    Image* loadImage(const string& texturename, int srcx = 0, int srcy = 0, int srcw = NULL, int srch = NULL);
+    Image* loadImage(const string& texturename, int srcx = 0, int srcy = 0,
+        int srcw = 0, int srch = 0);
+    Image** loadImageSheet(int* frameCount, const string& texturename,
+        int width, int height, int srcx = 0, int srcy = 0, int srcw = 0, int srch = 0);
 
     void unloadAllTextures();
     void loadAllTextures();

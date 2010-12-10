@@ -128,7 +128,8 @@ Texture* Resources::getTexture(const string& name)
     }
 }
 
-Image* Resources::loadImage(const string& texturename, int srcx, int srcy, int srcw, int srch)
+Image* Resources::loadImage(const string& texturename, int srcx, int srcy,
+    int srcw, int srch)
 {
     Texture* t = this->getTexture(texturename);
     if (t == NULL)
@@ -139,6 +140,51 @@ Image* Resources::loadImage(const string& texturename, int srcx, int srcy, int s
     return new Image(t, srcx, srcy, srcw, srch);
 }
 
+
+Image** Resources::loadImageSheet(int* frameCount, const string& texturename, int width,
+    int height, int srcx, int srcy, int srcw, int srch)
+{
+    Image** images = NULL;
+    Texture* texture = this->getTexture(texturename);
+    if (texture == NULL)
+        return NULL;
+
+    if (srcw == 0)
+        srcw = texture->width;
+        
+    if (srch == 0)
+        srch = texture->height;
+
+    if (width == 0)
+        width = srcw;
+
+    if (height == 0)
+        height = srch;
+
+    int imagexcount = srcw / width;
+    int imageycount = srch / height;
+
+    *frameCount = imageycount * imagexcount;
+    if (imageycount * imagexcount <= 0)
+    {
+        fprintf(stderr, "Could not load image(s) from: %s\n", texturename.c_str());
+        return NULL;
+    }
+    
+    images = new Image*[imageycount * imagexcount];
+    
+    for (int iy = 0; iy < imageycount; iy++)
+    {
+        for (int ix = 0; ix < imagexcount; ix++)
+        {
+            images[iy * imagexcount + ix] = new Image(texture,
+                srcx + ix * width,
+                srcy + iy * height, width, height);
+        }
+    }
+           
+    return images;
+}
 
 void Resources::unloadAllTextures()
 {

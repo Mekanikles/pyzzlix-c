@@ -2,6 +2,12 @@
 #define _BLOCK_H
 
 #include "time.h"
+#include "time.h"
+
+#include "vector.h"
+#include "sprite.h"
+
+class Animation;
 
 class Block : public Sprite
 {
@@ -31,8 +37,8 @@ class Block : public Sprite
         void doNormal();
 
         void moveToBoardCoord(int boardx, int boardy, Time currentTime);
-        void setToBoardCoord(boardx, boardy);
-        void animatePopup(self, currentTime);
+        void setToBoardCoord(int boardx, int boardy);
+        void animatePopup(Time currentTime);
 };
         
 #endif

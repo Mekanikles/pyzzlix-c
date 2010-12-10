@@ -1,8 +1,8 @@
 
 static bool checkBounds(int x, int y, int sizex, int sizey)
 {
-    if (x > this->sizex - 1 ||
-        y > this->sizey - 1 ||
+    if (x > sizex - 1 ||
+        y > sizey - 1 ||
         x < 0 ||
         y < 0)
         return false;
@@ -36,10 +36,10 @@ void Grid<T>::set(int x, int y, T* item)
 }
 
 template <class T>
-T* remove(int x, int y)
+T* Grid<T>::remove(int x, int y)
 {
     if (!checkBounds(x, y, this->sizex, this->sizey))
-        return;
+        return NULL;
     
     T* retval = this->array[y * sizex + x];
     this->array[y * sizex + x] = NULL;

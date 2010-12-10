@@ -45,6 +45,11 @@ const int STATUS_OFFSCREEN = 8;
 
 const int DEFAULT_GRAVITY_DELAY = 5;
 
+const int ANIMATION_MODE_NORMAL = 0;
+const int ANIMATION_MODE_LOOP = 1;
+const int ANIMATION_MODE_PINGPONG = 2;
+const int ANIMATION_MODE_PINGPONGLOOP = 3;
+
 
 
 #endif
