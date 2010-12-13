@@ -30,15 +30,20 @@ struct Texture
     {
         this->img = img;
         this->texID = texID;
+
         if (img != NULL)
         {
             this->pw = 1.0/(float)this->img->width;
             this->ph = 1.0/(float)this->img->height;
+            this->width = this->img->width;
+            this->height = this->img->height;
         }
         else
         {
             this->pw = 1.0;
             this->ph = 1.0;
+            this->width = 0;
+            this->height = 0;
         }
     }
 

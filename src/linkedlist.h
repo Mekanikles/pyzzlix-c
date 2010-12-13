@@ -11,7 +11,7 @@ class LinkNode {
 
 	T* item;
 
-	LinkNode():prev(0), next(0)
+	LinkNode():prev(0), next(0), item(0)
 	{}
 };
 

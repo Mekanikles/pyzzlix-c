@@ -7,6 +7,12 @@ struct Color
         double g;
         double b;
         double a;
+
+        Color():
+            r(0), g(0), b(0), a(0)
+        {
+         
+        }
         
         Color(double r, double g, double b, double a):
             r(r), g(g), b(b), a(a)
@@ -17,6 +23,17 @@ struct Color
         {
             return Color(this->r * d, this->g * d, this->b * d, this->a * d);       
         }
+
+        Color operator+(const Color& c)
+        {
+            return Color(this->r + c.r, this->g + c.g, this->b + c.b, this->a + c.a);       
+        }
+        Color operator-(const Color& c)
+        {
+            return Color(this->r - c.r, this->g - c.g, this->b - c.b, this->a - c.a);       
+        }
+        
+
         
 };
 

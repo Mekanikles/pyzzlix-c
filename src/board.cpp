@@ -38,29 +38,27 @@ Board::Board(int width, int height) : Sprite(),
                                       blocksFalling(false),
                                       glowColor(0.0, 0.0, 0.0, 0.0),
                                       glowDuration(0.0)
-{
-    this->reset();
-    
+{   
     this->background = new Sprite();
     this->background->setImage(Resources::getInstance()->loadImage("pixel", 1, 1));
     //this->background->setScale(Point(160.0, 208.0));
     //this->background->setColor(Color(0.0, 0.0, 0.0, 0.3));
-    this->background->setPos(Point(8.0, 16.0));
+    this->background->moveTo(Point(8.0, 16.0));
         
     this->blockcontainer = new Sprite();
-    this->blockcontainer->setPos(Point(8.0, 16.0));
+    this->blockcontainer->moveTo(Point(8.0, 16.0));
     
     this->border = new Sprite();
-    this->border->setImage(Resources::getInstance()->loadImage("windowframes.png", 24, 0, 176, 232));
-    this->border->setPos(Point(0.0,0.0));
+    this->border->setImage(Resources::getInstance()->loadImage("windowframes", 24, 0, 176, 232));
+    this->border->moveTo(Point(0.0,0.0));
         
     this->glow = new Sprite();
-    this->glow->setImage(Resources::getInstance()->loadImage("windowglows.png", 24, 0, 176, 232));
-    this->glow->setPos(Point(0.0, 0.0));
+    this->glow->setImage(Resources::getInstance()->loadImage("windowglows", 24, 0, 176, 232));
+    this->glow->moveTo(Point(0.0, 0.0));
     //this->glow.setCol(Color(0.0, 0.0, 0.0, 0.0));
         
     this->marker = new Marker();
-    this->marker->setOffset(this->blockcontainer->pos);
+    this->marker->setOffset(this->blockcontainer->getPosition());
     this->marker->moveToBoardCoord(2, 14, this->currentTime);
         
     this->subSprites->addItem(this->background);
@@ -68,11 +66,15 @@ Board::Board(int width, int height) : Sprite(),
     this->subSprites->addItem(this->marker);
     this->subSprites->addItem(this->border);
     this->subSprites->addItem(this->glow);
+
+    this->reset();
 }
 
-/*virtual*/ Board::~Board()
+Board::~Board()
 {
     //fprintf(stderr, "ran destructor!\n");
+
+
 }
 
 void Board::reset()

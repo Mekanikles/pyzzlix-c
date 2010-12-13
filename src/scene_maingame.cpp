@@ -10,10 +10,6 @@
 
 #include "constants.h"
 
-Sprite* s1;
-Sprite* s2;
-
-
 Scene_MainGame* Scene_MainGame::getInstance()
 {
     static Scene_MainGame instance;
@@ -26,27 +22,36 @@ Scene_MainGame::Scene_MainGame():
 {
     this->renderBlocker = false;
     this->updateBlocker = false;
+
+
+    Sprite* s1;
+    Sprite* s2;
+
+
     
     Texture* t = Resources::getInstance()->getTexture("blocks");
+
+    //Board* board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
+    //board->setImage(i);
+    //this->sprites->addItem(board);
     
-    Image* i = new Image(t, 0, 0, 32, 32);
+    Image* i = new Image(t, 0, 0, 64, 64);
     s1 = new Sprite();
     s2 = new Sprite();
-    s1->setImage(i);
+    //s1->setImage(i);
     s2->setImage(i);
-    s1->setPos(Point(32, 32));
-    s2->setPos(Point(64, 64));
+    //s1->moveTo(Point(32, 32));
+    s2->moveTo(Point(64, 64));
     
-    this->sprites->addItem(s1);
+    //this->sprites->addItem(s1);
     this->sprites->addItem(s2);
-        
-    Board* board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
-    board->setImage(i);
-    this->sprites->addItem(board);
+
     
-    s1->moveTo(Point(1200, 700), 5.0);
+    //s1->moveTo(Point(1200, 700), 5.0);
     s2->moveTo(Point(1200, 700), 5.0);
 
+    fprintf(stderr, "Lololololool\n");
+    
 }
 
 Scene_MainGame::~Scene_MainGame()

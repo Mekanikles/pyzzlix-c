@@ -1,7 +1,9 @@
 #ifndef _MARKER_H
 #define _MARKER_H
 
+#include "sprite.h"
 #include "time.h"
+
 
 class Marker : public Sprite
 {

@@ -18,10 +18,9 @@ Animation::Animation(const string& texturename, int width, int height,
     }
     
     this->reverse = reverse;
-    this->reset(0.0);
     
-    this->images = Resources::getInstance()->loadImageSheet(&this->frameCount, texturename, width, height,
-        srcx, srcy, srcw, srch);
+    this->images = Resources::getInstance()->loadImageSheet(&this->frameCount,
+        texturename, width, height,  srcx, srcy, srcw, srch);
     
     if (this->frameCount)
     {
@@ -35,6 +34,8 @@ Animation::Animation(const string& texturename, int width, int height,
     {
         this->frameLengths = NULL;
     }
+
+    this->reset(0.0);
 }
 
 Animation::~Animation()

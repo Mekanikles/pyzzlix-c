@@ -22,6 +22,15 @@ struct Vector
         {
             return Vector(this->x * d, this->y * d);       
         }
+        Vector operator+(const Vector& v)
+        {
+            return Vector(this->x + v.x, this->y + v.y);       
+        }
+        Vector operator-(const Vector& v)
+        {
+            return Vector(this->x - v.x, this->y - v.y);       
+    }
+        
         
 };
 

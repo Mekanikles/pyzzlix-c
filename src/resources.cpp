@@ -147,7 +147,10 @@ Image** Resources::loadImageSheet(int* frameCount, const string& texturename, in
     Image** images = NULL;
     Texture* texture = this->getTexture(texturename);
     if (texture == NULL)
+    {
+        *frameCount = 0;
         return NULL;
+    }
 
     if (srcw == 0)
         srcw = texture->width;

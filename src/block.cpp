@@ -53,7 +53,7 @@ void Block::setToBoardCoord(int boardx, int boardy)
 {
     this->boardx = boardx;
     this->boardy = boardy;
-    this->setPos(Point(this->boardx * this->size.x + this->offset.x,
+    this->moveTo(Point(this->boardx * this->size.x + this->offset.x,
                        this->boardy * this->size.y + this->offset.y));
 }
 

@@ -89,7 +89,7 @@ void Renderer::toggleFullScreen()
 
 void Renderer::drawSprite(Sprite* sprite, Time currentTime)
 {
-    Point p = sprite->calcPos(currentTime);
+    Point p = sprite->getPosition(currentTime);
                  
     double px = p.x - sprite->center.x;
     double py = p.y - sprite->center.y;
