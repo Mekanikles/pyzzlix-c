@@ -1,4 +1,9 @@
 
+template <typename T>
+InterpolatedValue<T>::InterpolatedValue():
+    time(0.0), reftime(0.0)
+{
+}
 
 template <typename T>
 void InterpolatedValue<T>::calcVal(Time currentTime)

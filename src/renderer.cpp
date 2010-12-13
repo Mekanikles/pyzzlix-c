@@ -91,8 +91,10 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
 {
     Point p = sprite->getPosition(currentTime);
                  
-    double px = p.x - sprite->center.x;
-    double py = p.y - sprite->center.y;
+    double px = -sprite->center.x;
+    double py = -sprite->center.y;
+
+    glPushMatrix();
     
     if(sprite->currentImage != NULL)
     {
@@ -102,6 +104,9 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
             glBindTexture(GL_TEXTURE_2D, img->texture->texID);
             this->currentTexID = img->texture->texID;
         }
+
+        glTranslatef(p.x, p.y, 0.0f);
+        glRotatef(sprite->getRotation(currentTime), 0.0f, 0.0f, 1.0f);
         
         glBegin(GL_QUADS);
         {
@@ -116,6 +121,9 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
         }
         glEnd();
     }
+
+    glPopMatrix();
+    
 }
 
 void Renderer::renderScene(Scene* scene)

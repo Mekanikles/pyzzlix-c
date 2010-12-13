@@ -31,27 +31,24 @@ Scene_MainGame::Scene_MainGame():
     
     Texture* t = Resources::getInstance()->getTexture("blocks");
 
-    //Board* board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
-    //board->setImage(i);
-    //this->sprites->addItem(board);
-    
     Image* i = new Image(t, 0, 0, 64, 64);
     s1 = new Sprite();
     s2 = new Sprite();
-    //s1->setImage(i);
+    s1->setImage(i);
     s2->setImage(i);
-    //s1->moveTo(Point(32, 32));
+    s1->moveTo(Point(32, 32));
     s2->moveTo(Point(64, 64));
     
-    //this->sprites->addItem(s1);
+    this->sprites->addItem(s1);
     this->sprites->addItem(s2);
 
-    
-    //s1->moveTo(Point(1200, 700), 5.0);
+    Board* board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
+    board->setImage(i);
+    this->sprites->addItem(board);
+        
+    s1->moveTo(Point(1200, 700), 5.0);
     s2->moveTo(Point(1200, 700), 5.0);
-
-    fprintf(stderr, "Lololololool\n");
-    
+    s2->rotateTo(90, 5.0);
 }
 
 Scene_MainGame::~Scene_MainGame()
