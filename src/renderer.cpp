@@ -107,6 +107,10 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
 
         glTranslatef(p.x, p.y, 0.0f);
         glRotatef(sprite->getRotation(currentTime), 0.0f, 0.0f, 1.0f);
+        Vector s = sprite->getScale(currentTime);
+        glScalef(s.x, s.y, 1.0f);
+        Color c = sprite->getColor(currentTime);
+        glColor4f(c.r, c.g, c.b, c.a);
         
         glBegin(GL_QUADS);
         {

@@ -39,16 +39,20 @@ Scene_MainGame::Scene_MainGame():
     s1->moveTo(Point(32, 32));
     s2->moveTo(Point(64, 64));
     
-    this->sprites->addItem(s1);
+    
     this->sprites->addItem(s2);
-
+    this->sprites->addItem(s1);
+    
     Board* board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
     board->setImage(i);
     this->sprites->addItem(board);
         
     s1->moveTo(Point(1200, 700), 5.0);
     s2->moveTo(Point(1200, 700), 5.0);
-    s2->rotateTo(90, 5.0);
+    s2->rotateTo(360, 5.0);
+    s2->fadeTo(Color(1.0f, 0.0f, 0.5f, 0.5f), 5.0);
+    s2->scaleTo(Vector(1.7, 2.0), 5.0);
+    
 }
 
 Scene_MainGame::~Scene_MainGame()

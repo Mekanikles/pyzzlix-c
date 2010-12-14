@@ -4,13 +4,20 @@
 #include "animation.h"
 
 
-Sprite::Sprite()
+Sprite::Sprite():
+    softblend(false),         
+    currentTime(0.0),
+    lastTime(0.0),
+    subSprites(new LinkedList<Sprite>()),
+    currentImage(NULL),
+    currentAnimation(NULL), 
+    center(0.0,0.0),
+    position(Point(0.0, 0.0)),
+    scalevector(Vector(1.0, 1.0)),
+    color(Color(1.0f, 1.0f, 1.0f, 1.0f)),
+    rotation(0.0f)
 {
-    this->subSprites = new LinkedList<Sprite>();
-    this->currentAnimation = NULL;
-    this->currentImage = NULL;
-    this->currentTime = 0;
-        
+
 }
 Sprite::~Sprite()
 {

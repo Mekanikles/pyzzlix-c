@@ -6,6 +6,13 @@ InterpolatedValue<T>::InterpolatedValue():
 }
 
 template <typename T>
+InterpolatedValue<T>::InterpolatedValue(const T& val):
+    val(val), refval(val), time(0.0), reftime(0.0)
+{
+
+}
+
+template <typename T>
 void InterpolatedValue<T>::calcVal(Time currentTime)
 {
     if (currentTime <= this->time)

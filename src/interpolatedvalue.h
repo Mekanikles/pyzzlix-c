@@ -16,6 +16,7 @@ class InterpolatedValue
     public:
 
         InterpolatedValue();
+        InterpolatedValue(const T& val);
         T getVal(Time currentTime);
         void setVal(T val, Time currentTime, Time duration = 0.0);
         void changeVal(T val, Time currentTime, Time duration = 0.0);
