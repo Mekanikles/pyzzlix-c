@@ -4,13 +4,14 @@
 
 #include "sprite.h"
 
-Scene::Scene()
+Scene::Scene():
+    renderBlocker(false),
+    updateBlocker(false)
 {
-    this->sprites = new LinkedList<Sprite>();
+    this->sprites = new FastLinkedList<Sprite>();
 }
 Scene::~Scene()
 {
-    this->sprites->destroy();
     delete this->sprites;
 }
 
@@ -24,6 +25,11 @@ void Scene::update(Time deltaTime)
         s->update(this->currentTime);
         s = s->next;
     }
+}
+
+bool Scene::handleEvent(Event* event)
+{
+    return false;
 }
 
 bool Scene::isRenderBlocker()

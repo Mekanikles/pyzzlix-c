@@ -21,7 +21,7 @@ class Sprite : public Linkable<Sprite>
         Time currentTime;
         Time lastTime;
         
-        LinkedList<Sprite>* subSprites;
+        FastLinkedList<Sprite>* subSprites;
         Image* currentImage;
         Animation* currentAnimation;
         Point center;
@@ -32,8 +32,11 @@ class Sprite : public Linkable<Sprite>
         InterpolatedValue<float> rotation;
         
         
-        Sprite();
+        Sprite(Time currentTime = 0);
         virtual ~Sprite();
+        
+        void addSprite(Sprite* sprite);
+        void removeSprite(Sprite* sprite);
         
         void setImage(Image* image);
         void setAnimation(Animation* animation);

@@ -4,14 +4,14 @@
 #include "animation.h"
 
 
-Sprite::Sprite():
+Sprite::Sprite(Time currentTime):
     softblend(false),         
-    currentTime(0.0),
-    lastTime(0.0),
-    subSprites(new LinkedList<Sprite>()),
+    currentTime(currentTime),
+    lastTime(currentTime),
+    subSprites(new FastLinkedList<Sprite>()),
     currentImage(NULL),
     currentAnimation(NULL), 
-    center(0.0,0.0),
+    center(Point(0.0, 0.0)),
     position(Point(0.0, 0.0)),
     scalevector(Vector(1.0, 1.0)),
     color(Color(1.0f, 1.0f, 1.0f, 1.0f)),
@@ -21,9 +21,37 @@ Sprite::Sprite():
 }
 Sprite::~Sprite()
 {
-    this->subSprites->destroy();
     delete this->subSprites;
 }
+
+
+void Sprite::addSprite(Sprite* sprite)
+{
+    if (sprite == NULL)
+        return;
+    
+    if (sprite->list != NULL && sprite->list != this->subSprites)
+    {
+        sprite->list->releaseLink(sprite);
+    }
+    this->subSprites->addLink(sprite);
+}
+
+void Sprite::removeSprite(Sprite* sprite)
+{
+    if (sprite == NULL)
+        return;
+
+    if (sprite->list != NULL && sprite->list == this->subSprites)
+    {
+        this->subSprites->releaseLink(sprite);
+    }
+    else
+    {
+        fprintf(stderr, "Tried to remove sprite from wrong list!\n");
+    }
+}
+
 
 
 void Sprite::setImage(Image* image)

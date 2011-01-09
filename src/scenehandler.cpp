@@ -4,19 +4,31 @@
 
 #include "scene.h"
 
-SceneHandler SceneHandler::instance;
 SceneHandler* SceneHandler::getInstance()
 {
-    return &SceneHandler::instance;
+    static SceneHandler instance;
+    return &instance;
 }
 
 
 SceneHandler::SceneHandler()
 {
-    this->sceneStack = new LinkedList<Scene>();
+    this->sceneStack = new FastLinkedList<Scene>();
 }
 SceneHandler::~SceneHandler()
 {
+    // Since scenes are singletons
+    // Make sure scenes are not auto-deleted
+    Scene* n;
+    Scene* s = this->sceneStack->first;
+    while (s != NULL)
+    {
+        n = s->next;
+
+        this->sceneStack->releaseLink(s);
+        
+        s = n;
+    }
     delete this->sceneStack;
 }
 
@@ -40,17 +52,17 @@ void SceneHandler::pushScene(Scene* scene)
     if (scene->list != NULL)
     {
         fprintf(stderr, "Removed scene before push\n");
-        ((LinkedList<Scene>*)(scene->list))->releaseItem(scene);
+        ((FastLinkedList<Scene>*)(scene->list))->releaseLink(scene);
     }
         
-    this->sceneStack->addItem(scene);
+    this->sceneStack->addLink(scene);
 }
 
 
 void SceneHandler::removeScene(Scene* scene)
 {
     if (scene->list != NULL)
-        ((LinkedList<Scene>*)(scene->list))->releaseItem(scene);
+        ((FastLinkedList<Scene>*)(scene->list))->releaseLink(scene);
 
 }
 
@@ -90,4 +102,18 @@ void SceneHandler::tickScenes()
         
         s = s->next;
     }
+}
+
+void SceneHandler::handleEvent(Event* event)
+{
+    Scene* s = this->sceneStack->first;
+    while (s != NULL)
+    {
+        if (s->handleEvent(event) || s->isUpdateBlocker())
+            return;
+        
+        s = s->next;
+    }
+
+    delete event;
 }

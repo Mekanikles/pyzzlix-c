@@ -19,7 +19,7 @@ Animation::Animation(const string& texturename, int width, int height,
     
     this->reverse = reverse;
     
-    this->images = Resources::getInstance()->loadImageSheet(&this->frameCount,
+    this->images = Resources::getInstance()->getImageSheet(&this->frameCount,
         texturename, width, height,  srcx, srcy, srcw, srch);
     
     if (this->frameCount)

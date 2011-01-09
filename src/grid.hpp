@@ -50,9 +50,9 @@ template <class T>
 T* Grid<T>::get(int x, int y)
 {
     if (!checkBounds(x, y, this->sizex, this->sizey))
-        return;
+        return NULL;
     
-    return this->array[x][y];
+    return this->array[y * sizex + x];
 }
 
 template <class T>

@@ -12,21 +12,51 @@
 
 #include "scene_maingame.h"
 
+#include "event.h"
+
+#include "keymap.h"
+
 Renderer* renderer = Renderer::getInstance();
 SceneHandler* sceneHandler = SceneHandler::getInstance();
-Scene* scene_maingame = Scene_MainGame::getInstance();
+Scene_MainGame* scene_maingame = Scene_MainGame::getInstance();
 
+void GLFWCALL keyCallback(int key, int action)
+{
+    if (action == GLFW_PRESS && key == GLFW_KEY_F1)
+    {
+        //renderer.toggleFullscreen();
+    }
+    else
+    {
+        sceneHandler->handleEvent(new KeyEvent(key, (action == GLFW_PRESS)));
+    }
+}
+ 
 bool init()
 {
 
     glfwInit();
     
     renderer->init("Pyzzlix", 1280, 720, false);
+
+    glfwDisable(GLFW_AUTO_POLL_EVENTS);
+    glfwSetKeyCallback(&keyCallback);
+
+    KeyMap* keymap = KeyMap::getInstance();
+
+    keymap->setKey(GLFW_KEY_RIGHT, KEY_RIGHT);
+    keymap->setKey(GLFW_KEY_LEFT, KEY_LEFT);
+    keymap->setKey(GLFW_KEY_DOWN, KEY_DOWN);
+    keymap->setKey(GLFW_KEY_UP, KEY_UP);
+    keymap->setKey('X', KEY_ROTATE_RIGHT);
+    keymap->setKey('Z', KEY_ROTATE_LEFT);
+    
     sceneHandler->pushScene(scene_maingame);
+    
+    scene_maingame->startGame();
     
     return true;
 }
-
 
 void cleanup()
 {
@@ -34,14 +64,13 @@ void cleanup()
     glfwTerminate();
 }
 
-
 int main(int argc, char** argv)
 {
     fprintf(stderr, "Running pyzzlix!\n");
 
     init();
 
-    Time time = glfwGetTime();
+    Time time = glfwGetTime() * 1.0;
     
     Time nextupdatetime = time;
     Time lastupdatetime = time;
@@ -49,31 +78,21 @@ int main(int argc, char** argv)
     Time lastfpsupdate = time;
     int fpscounter = 0;
     
-    double LOGICS_PER_SEC = 5.0;
+    double LOGICS_PER_SEC = 30.0;
     Time logicLength = 1.0 / LOGICS_PER_SEC;
     
     while (true)
-    {
-        
-        if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
-        {
-            break;
-        }
-    
-        time = glfwGetTime();
-        
-        if (time - lastfpsupdate >= 1.0)
-        {
-            fprintf(stderr, "FPS: %i\n", fpscounter);
-            fpscounter = 0;
-            lastfpsupdate = time;
-        }
-
+    {        
+        time = glfwGetTime() * 1.0;
                
         if (time >= nextupdatetime)
         {
             while (time >= nextupdatetime)
             {
+                glfwPollEvents();
+                if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
+                     break;
+                 
                 sceneHandler->update(nextupdatetime - lastupdatetime);
                 lastupdatetime = nextupdatetime;
            
@@ -87,14 +106,24 @@ int main(int argc, char** argv)
         }
         else
         {
+            glfwPollEvents();
+            if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
+                break;
+
             renderer->render(time - lastrendertime);
             lastrendertime = time;
             fpscounter += 1;
         }
             
-            
+        if (time - lastfpsupdate >= 1.0)
+        {
+            fprintf(stderr, "FPS: %i\n", fpscounter);
+            fpscounter = 0;
+            lastfpsupdate = time;
+        }
+        
         fflush(stderr);    
-        //glfwSleep(1.0/60.0);
+//        glfwSleep(1.0/10.0);
     }
     
     

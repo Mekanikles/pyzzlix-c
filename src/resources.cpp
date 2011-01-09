@@ -128,7 +128,7 @@ Texture* Resources::getTexture(const string& name)
     }
 }
 
-Image* Resources::loadImage(const string& texturename, int srcx, int srcy,
+Image* Resources::getImage(const string& texturename, int srcx, int srcy,
     int srcw, int srch)
 {
     Texture* t = this->getTexture(texturename);
@@ -136,12 +136,19 @@ Image* Resources::loadImage(const string& texturename, int srcx, int srcy,
     {
         fprintf(stderr, "Could not load texture %s.\n", texturename.c_str());
     }
+
+    if (srcw == 0 || srch == 0)
+    {
+        srcw = t->width;
+        srch = t->height;
+    }
+
     
     return new Image(t, srcx, srcy, srcw, srch);
 }
 
 
-Image** Resources::loadImageSheet(int* frameCount, const string& texturename, int width,
+Image** Resources::getImageSheet(int* frameCount, const string& texturename, int width,
     int height, int srcx, int srcy, int srcw, int srch)
 {
     Image** images = NULL;
@@ -191,7 +198,7 @@ Image** Resources::loadImageSheet(int* frameCount, const string& texturename, in
 
 void Resources::unloadAllTextures()
 {
-    LabelItem<Texture>* i = textures.list.first;
+    LabelItem<Texture>* i = textures.list->first;
     while (i != NULL)
     {
         if (i->item != NULL && i->item->texID != -1)
@@ -207,7 +214,7 @@ void Resources::unloadAllTextures()
 
 void Resources::loadAllTextures()
 {
-    LabelItem<Texture>* i = textures.list.first;
+    LabelItem<Texture>* i = textures.list->first;
     while (i != NULL)
     {
         if (i->item != NULL && i->item->texID == -1)

@@ -4,28 +4,29 @@
 #include "linkedlist.h"
 #include "time.h"
 
+#include "event.h"
+
 class Scene;
 
 class SceneHandler
 {
-public:
-
-    LinkedList<Scene>* sceneStack;
-
-
-    static SceneHandler instance;
-    static SceneHandler* getInstance();
-
-    SceneHandler();
-    ~SceneHandler();
-
-    Scene* getDeepestRenderedScene();
-    
-    void pushScene(Scene* scene);
-    void removeScene(Scene* scene);
-    void update(Time deltaTime);
-    void tickScenes();
-
+    public:
+        
+        FastLinkedList<Scene>* sceneStack;
+        
+        static SceneHandler* getInstance();
+        
+        SceneHandler();
+        ~SceneHandler();
+        
+        Scene* getDeepestRenderedScene();
+        
+        void pushScene(Scene* scene);
+        void removeScene(Scene* scene);
+        void update(Time deltaTime);
+        void tickScenes();
+        
+        void handleEvent(Event* event);  
 };
 
 #endif

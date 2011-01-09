@@ -36,13 +36,6 @@ const int EVENT_LEVEL_UP = USEREVENT+2;
 const int EVENT_PRELOADED_PART = USEREVENT+3;
 const int EVENT_TIMER_STATE_CHANGED = USEREVENT+4;
 
-
-const int STATUS_NONE = 0;
-const int STATUS_MOVING = 1;
-const int STATUS_WEIGHTLESS = 2;
-const int STATUS_IN_CIRCLE = 4;
-const int STATUS_OFFSCREEN = 8;
-
 const int DEFAULT_GRAVITY_DELAY = 5;
 
 const int ANIMATION_MODE_NORMAL = 0;
@@ -50,6 +43,10 @@ const int ANIMATION_MODE_LOOP = 1;
 const int ANIMATION_MODE_PINGPONG = 2;
 const int ANIMATION_MODE_PINGPONGLOOP = 3;
 
+const int STATE_NORMAL = 0;
+const int STATE_IDLE = 1;
+const int STATE_RUNNING = 2;
+const int STATE_GAMEOVER = 3;
 
 
 #endif

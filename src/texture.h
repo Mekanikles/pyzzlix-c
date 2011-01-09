@@ -22,8 +22,8 @@ struct Texture
     int texID;
     int width;
     int height;
-    float pw;
-    float ph;
+    double pw;
+    double ph;
 
 
     void updateData(int texID, ImageFile* img)
@@ -33,8 +33,8 @@ struct Texture
 
         if (img != NULL)
         {
-            this->pw = 1.0/(float)this->img->width;
-            this->ph = 1.0/(float)this->img->height;
+            this->pw = 1.0/(double)this->img->width;
+            this->ph = 1.0/(double)this->img->height;
             this->width = this->img->width;
             this->height = this->img->height;
         }

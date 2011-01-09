@@ -9,19 +9,20 @@
 #include "color.h"
 #include "time.h"
 
+#include "block.h"
+
 class Scene;
 class Sprite;
 class Marker;
-class Block;
+
 
 class Board : public Sprite
 {
+    public:
         Grid<Block> grid;
-        int width;
-        int height;
 
         Sprite* background;
-        Sprite* blockcontainer;
+        Sprite* blockContainer;
         Sprite* border;
         Sprite* glow;
         Marker* marker;
@@ -31,15 +32,40 @@ class Board : public Sprite
         Time glowDuration;
         bool gameOver;
 
-        LinkedList<Sprite> lastRotated;
+        LinkedList<Sprite*> lastRotated;
+
+        int blockTypeArray[MAX_BLOCKTYPES];
+        int blockTypes;
+
+        float gridSlotSize;
+
+        int width;
+        int height;
         
-    public:
         Board(int width, int height);
         virtual ~Board();
 
+        void moveBlockToCoord(Block* block, int boardx, int boardy);
+        void setBlockToCoord(Block* block, int boardx, int boardy);
+        void moveMarkerToCoord(int boardx, int boardy);
+        void setMarkerToCoord(int boardx, int boardy);
+
+
+        void moveMarker(int dx, int dy);
+        bool rotateMarker(int direction);
+
+        bool rotateBlocks(int x, int y, int direction, int radius);
+        
+        int getRandomBlockType();
+        void clearBlockTypes();
+        void setBlockType(int type, bool enabled = true);
+
+        
         void reset();
         void clear(int x, int y);
-        
+        void fillBuffer();
+        bool full();
+        void addBlock(Block* block);        
 };
 
 #endif

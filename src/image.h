@@ -23,10 +23,10 @@ struct Image
 
         if (texture != NULL)
         {
-            this->tx1 = this->srcx * this->texture->pw;
-            this->ty1 = this->srcy * this->texture->ph;
-            this->tx2 = (this->srcx + this->width) * this->texture->pw;
-            this->ty2 = (this->srcy + this->height) * this->texture->ph;
+            this->tx1 = (float)(this->srcx * this->texture->pw);
+            this->ty1 = (float)(this->srcy * this->texture->ph);
+            this->tx2 = (float)((this->srcx + this->width) * this->texture->pw);
+            this->ty2 = (float)((this->srcy + this->height) * this->texture->ph);
         }
     }
 };

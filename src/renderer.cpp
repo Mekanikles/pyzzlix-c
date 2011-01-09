@@ -66,7 +66,7 @@ bool Renderer::setDisplay()
     glViewport(0, 0, this->width, this->height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, this->width, this->height, 0, 0, 100);
+    glOrtho(0, 320, 240, 0, 0, 100);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -89,13 +89,21 @@ void Renderer::toggleFullScreen()
 
 void Renderer::drawSprite(Sprite* sprite, Time currentTime)
 {
-    Point p = sprite->getPosition(currentTime);
-                 
-    double px = -sprite->center.x;
-    double py = -sprite->center.y;
+    if (sprite->currentImage == NULL && sprite->subSprites == NULL)
+        return;
 
     glPushMatrix();
-    
+
+    Point p = sprite->getPosition(currentTime);
+                    
+    glTranslatef(p.x, p.y, 0.0f);
+    glRotatef(sprite->getRotation(currentTime), 0.0f, 0.0f, 1.0f);
+    Vector s = sprite->getScale(currentTime);
+    glScalef(s.x, s.y, 1.0f);
+    Color c = sprite->getColor(currentTime);
+    glColor4f(c.r, c.g, c.b, c.a);
+
+
     if(sprite->currentImage != NULL)
     {
         Image* img = sprite->currentImage;
@@ -105,13 +113,9 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
             this->currentTexID = img->texture->texID;
         }
 
-        glTranslatef(p.x, p.y, 0.0f);
-        glRotatef(sprite->getRotation(currentTime), 0.0f, 0.0f, 1.0f);
-        Vector s = sprite->getScale(currentTime);
-        glScalef(s.x, s.y, 1.0f);
-        Color c = sprite->getColor(currentTime);
-        glColor4f(c.r, c.g, c.b, c.a);
-        
+        float px = -sprite->center.x;
+        float py = -sprite->center.y;
+
         glBegin(GL_QUADS);
         {
             glTexCoord2f(img->tx1, img->ty1);
@@ -125,9 +129,19 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
         }
         glEnd();
     }
-
-    glPopMatrix();
     
+    if (sprite->subSprites != NULL)
+    {
+        Sprite* s = sprite->subSprites->first;
+        while(s != NULL)
+        {
+            this->drawSprite(s, currentTime);
+            s = s->next;
+        }
+        
+    }
+    
+    glPopMatrix();    
 }
 
 void Renderer::renderScene(Scene* scene)

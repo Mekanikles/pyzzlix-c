@@ -9,28 +9,38 @@
 
 class Animation;
 
+const int BLOCKTYPE_HEART = 0;
+const int BLOCKTYPE_SQUARE = 1;
+const int BLOCKTYPE_TRIANGLE = 2;
+const int BLOCKTYPE_CROSS = 3;
+const int BLOCKTYPE_DIAMOND = 4;
+const int BLOCKTYPE_CIRCLE = 5;
+const int BLOCKTYPE_PLUS = 6;
+
+const int MAX_BLOCKTYPES = 7;
+
+const int STATUS_NONE = 0;
+const int STATUS_MOVING = 1;
+const int STATUS_ON_CIRCLE = 4;
+const int STATUS_INSIDE_CIRCLE = 8;
+const int STATUS_ON_PATH = 16;
+const int STATUS_OFFSCREEN = 32;
+
 class Block : public Sprite
 {
+    public:        
         int type;
         Animation* blinkAnimation;
         Animation* pulseAnimation;
         Animation* normalAnimation;
 
-        int boardx;
-        int boardy;
-
         float gravityDelay;
         int status;
-        
-        Vector size;
-        Vector center;
-        Vector offset;
-
+   
         int comboCounter;
         int layer;
-    public:
 
-        Block(int boardx, int boardy, int type, Vector& offset);
+        Block(int boardx, int boardy, int type, Time currentTime);
     
         void doPulse();      
         void doBlink();
@@ -38,7 +48,11 @@ class Block : public Sprite
 
         void moveToBoardCoord(int boardx, int boardy, Time currentTime);
         void setToBoardCoord(int boardx, int boardy);
-        void animatePopup(Time currentTime);
+        void animatePopup();
+        
+        int boardx;
+        int boardy;
+
 };
         
 #endif

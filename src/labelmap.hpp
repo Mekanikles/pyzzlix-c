@@ -10,18 +10,18 @@ void LabelMap<T>::set(const string& label, T* item)
     
     LabelItem<T>* i = new LabelItem<T>(label, item);
     
-    this->list.addItem(i);
+    this->list->addLink(i);
 }
 
 template <class T>
 void LabelMap<T>::remove(const string& label)
 {
-    LabelItem<T>* p = this->list.first;
+    LabelItem<T>* p = this->list->first;
     while(p != NULL)
     {
         if (p->s == label)
         {
-            this->list.deleteItem(p);
+            this->list->deleteLink(p);
             return;
         }
 
@@ -32,7 +32,7 @@ void LabelMap<T>::remove(const string& label)
 template <class T>
 T* LabelMap<T>::get(const string& label)
 {
-    LabelItem<T>* p = this->list.first;
+    LabelItem<T>* p = this->list->first;
     while(p != NULL)
     {
         if (p->s == label)

@@ -12,7 +12,6 @@ class Marker : public Sprite
 
         void setOffset(const Vector& offset);
                
-        void moveToBoardCoord(int boardx, int boardy, Time currentTime);
         void move(int dx, int dy, Time currentTime);
         void turn();
         void fail();
