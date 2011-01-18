@@ -1,18 +1,41 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+#include "assert.h"
+
 #include "linkedlist.h"
+
+template <class T>
+FastLinkedList<T>::FastLinkedList():last(0), first(0), length(0)
+{ 
+}
+
+template <class T>
+FastLinkedList<T>::FastLinkedList(const FastLinkedList<T>& c):last(0), first(0), length(0)
+{
+    *this = c;
+}
+
+template <class T>
+FastLinkedList<T>& FastLinkedList<T>::operator=(const FastLinkedList<T>& c)
+{
+    this->destroyAll();
+    T* p = c.first;
+    while(p != NULL)
+    {
+        T* n = new T(*p);
+        *n = *p;
+        this->addLinkLast(n);
+        p = p->next;
+    }
+    return *this;
+}    
+
 
 template <class T>
 FastLinkedList<T>::~FastLinkedList()
 {
     this->destroyAll();
-}
-
-template <class T>
-int FastLinkedList<T>::getLength()
-{
-    return length;
 }
 
 template <class T>
@@ -35,7 +58,7 @@ void FastLinkedList<T>::addLinkLast(T* p)
 
 template <class T>
 void FastLinkedList<T>::addLink(T* p)
-{   
+{    
     bool isempty = (first == 0);
     if (!isempty) {
         first->prev = p;
@@ -47,7 +70,7 @@ void FastLinkedList<T>::addLink(T* p)
     first = p;
 
     length++;
-    
+
     p->list = this;
 }
 
@@ -108,7 +131,7 @@ T* FastLinkedList<T>::releaseLink(T* p)
     p->next = 0;
 
     p->list = NULL;
-
+    
     length--;
     
     return p;
@@ -119,7 +142,7 @@ void FastLinkedList<T>::destroyAll()
 {
     while (first != 0)
     {
-        deleteLink(first);
+        this->deleteLink(first);
     }
 }
 
@@ -187,45 +210,17 @@ void FastLinkedList<T>::insertPrev(T* p, T* n)
 }
 
 template <class T>
-bool LinkIterator<T>::isAtEnd()
+bool LinkIterator<T>::isValid()
 {
-    return (this->node->next == NULL);
+    return (this->node != NULL);
 }
 
 template <class T>
-bool LinkIterator<T>::isAtBeginning()
+void LinkIterator<T>::deleteAndStep()
 {
-    return (this->node->prev == NULL);
-}
-
-template <class T>
-void LinkedIterator<T>::deleteMoveNext()
-{
-    
-    
-    if (this->first != NULL)
-        this->deleteLink(this->first);
-}
-
-template <class T>
-void LinkedIterator<T>::deleteMovePrevious()
-{
-    if (this->first != NULL)
-        this->deleteLink(this->first);
-}
-
-template <class T>
-void LinkIterator<T>::next()
-{
-    assert (this->node != NULL);
-    this->node = this->node->next;
-}
-
-template <class T>
-void LinkIterator<T>::previous()
-{
-    assert (this->node != NULL);
-    this->node = this->node->next;
+    LinkNode<T> node = this->node;
+    this->step();
+    this->deleteLink(this->node);
 }
 
 template <class T>
@@ -236,20 +231,99 @@ T LinkIterator<T>::item()
 }
 
 template <class T>
-T LinkedList<T>::clear()
+void LinkIterator<T>::step()
+{
+    assert (this->node != NULL);
+    this->node = this->node->next;
+}
+
+template <class T>
+void ReverseLinkIterator<T>::step()
+{
+    assert (this->node != NULL);
+    this->node = this->node->prev;
+}
+
+template <class T>
+void WrappingLinkIterator<T>::step()
+{
+    assert (this->node != NULL);
+    if (this->node->next == NULL)
+    {
+        this->node = this->list->first;
+    }
+    else
+    {
+        this->node = this->node->next;
+    }
+}
+
+template <class T>
+void ReverseWrappingLinkIterator<T>::step()
+{
+    assert (this->node != NULL);
+    if (this->node->prev == NULL)
+    {
+        this->node = this->list->last;
+    }
+    else
+    {
+        this->node = this->node->prev;
+    }
+}
+
+template <class T>
+void LinkIterator<T>::reset()
+{
+    this->node = this->list->first;
+}
+
+template <class T>
+void ReverseLinkIterator<T>::reset()
+{
+    this->node = this->list->last;
+}
+
+template <class T>
+void WrappingLinkIterator<T>::reset()
+{
+    this->node = this->list->first;
+}
+
+template <class T>
+void ReverseWrappingLinkIterator<T>::reset()
+{
+    this->node = this->list->last;
+}
+
+template <class T>
+void LinkedList<T>::clear()
 {
     this->destroyAll();
 }
 
+
 template <class T>
-T LinkedList<T>::getFirstItem()
+int LinkedList<T>::getLength()
+{
+    return this->length;
+}
+
+template <class T>
+bool LinkedList<T>::hasItem(T* item)
+{
+    return (item->list == this);
+}
+
+template <class T>
+T LinkedList<T>::getFirst()
 {
     assert(this->first != NULL);
     return this->first->item;
 }
 
 template <class T>
-T LinkedList<T>::getLastItem()
+T LinkedList<T>::getLast()
 {
     assert(this->last != NULL);
     return this->last->item;
@@ -282,15 +356,25 @@ void LinkedList<T>::addItemLast(T p)
 }
 
 template <class T>
-LinkIterator<T> LinkedList<T>::getHeadIterator()
+LinkIterator<T> LinkedList<T>::getIterator()
 {
-    return LinkIterator<T>(this->first);
+    return LinkIterator<T>(this->first, this);
 }
 
 template <class T>
-LinkIterator<T> LinkedList<T>::getEndIterator()
+ReverseLinkIterator<T> LinkedList<T>::getReverseIterator()
 {
-    return LinkIterator<T>(this->last);
+    return ReverseLinkIterator<T>(this->last, this);
 }
-    
 
+template <class T>
+WrappingLinkIterator<T> LinkedList<T>::getWrappingIterator()
+{
+    return WrappingLinkIterator<T>(this->first, this);
+}
+
+template <class T>
+ReverseWrappingLinkIterator<T> LinkedList<T>::getReverseWrappingIterator()
+{
+    return ReverseWrappingLinkIterator<T>(this->last, this);
+}

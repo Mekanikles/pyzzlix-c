@@ -15,13 +15,13 @@ Block::Block(int boardx, int boardy, int type, Time currentTime):
     int size = 16;
     
     this->blinkAnimation = new Animation("blocks",
-         size, size, this->type * size, 0, size, 6 * size, 0.016, ANIMATION_MODE_PINGPONGLOOP);
+         size, size, this->type * size, 0, size, 6 * size, 0.015, ANIMATION_MODE_LOOP);
     
     this->pulseAnimation = new Animation("blocks",
-         size, size, this->type * size, 0, size, 6 * size, 0.016, ANIMATION_MODE_PINGPONGLOOP);
+         size, size, this->type * size, 0, size, 6 * size, 0.015, ANIMATION_MODE_PINGPONGLOOP);
     
     this->normalAnimation = new Animation("blocks",
-         size, size, this->type * size, 0, size, size, 0.016, ANIMATION_MODE_NORMAL);
+         size, size, this->type * size, 0, size, size, 0, ANIMATION_MODE_NORMAL);
 
     
     this->setAnimation(this->normalAnimation);

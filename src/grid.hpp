@@ -10,12 +10,10 @@ static bool checkBounds(int x, int y, int sizex, int sizey)
 }
 
 template <class T>
-Grid<T>::Grid(int sizex, int sizey)
+Grid<T>::Grid(int sizex, int sizey, int xoffset, int yoffset):
+    sizex(sizex), sizey(sizey), xoffset(xoffset), yoffset(yoffset)
 {
     this->array = new T*[sizex * sizey];
-
-    this->sizex = sizex;
-    this->sizey = sizey;
 
     this->clear();
 }
@@ -29,30 +27,30 @@ Grid<T>::~Grid()
 template <class T>
 void Grid<T>::set(int x, int y, T* item)
 {
-   if (!checkBounds(x, y, this->sizex, this->sizey))
+   if (!checkBounds(x + this->xoffset, y + this->yoffset, this->sizex, this->sizey))
         return;
    
-   this->array[y * sizex + x] = item;
+   this->array[(y + this->yoffset) * sizex + (x + this->xoffset)] = item;
 }
 
 template <class T>
 T* Grid<T>::remove(int x, int y)
 {
-    if (!checkBounds(x, y, this->sizex, this->sizey))
+    if (!checkBounds(x + this->xoffset, y + this->yoffset, this->sizex, this->sizey))
         return NULL;
     
-    T* retval = this->array[y * sizex + x];
-    this->array[y * sizex + x] = NULL;
+    T* retval = this->array[(y + this->yoffset) * sizex + (x + this->xoffset)];
+    this->array[(y + this->yoffset) * sizex + (x + this->xoffset)] = NULL;
     return retval;
 }
 
 template <class T>
 T* Grid<T>::get(int x, int y)
 {
-    if (!checkBounds(x, y, this->sizex, this->sizey))
+    if (!checkBounds(x + this->xoffset, y + this->yoffset, this->sizex, this->sizey))
         return NULL;
     
-    return this->array[y * sizex + x];
+    return this->array[(y + this->yoffset) * sizex + (x + this->xoffset)];
 }
 
 template <class T>

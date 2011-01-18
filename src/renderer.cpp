@@ -150,7 +150,7 @@ void Renderer::renderScene(Scene* scene)
         scene->renderTime += this->deltaTime;
 
     //fprintf(stderr, "rendertime: %f\n", scene->renderTime);
-    
+
     Sprite* s = scene->sprites->first;
     while(s != NULL)
     {

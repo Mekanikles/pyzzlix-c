@@ -9,8 +9,10 @@ class Grid
         T** array;
         int sizex;
         int sizey;
+        int xoffset;
+        int yoffset;
         
-        Grid(int sizex, int sizey);
+        Grid(int sizex, int sizey, int xoffset = 0, int yoffset = 0);
         virtual ~Grid();
 
         void set(int x, int y, T* item);

@@ -20,11 +20,20 @@ Renderer* renderer = Renderer::getInstance();
 SceneHandler* sceneHandler = SceneHandler::getInstance();
 Scene_MainGame* scene_maingame = Scene_MainGame::getInstance();
 
+bool done = false;
+
 void GLFWCALL keyCallback(int key, int action)
 {
-    if (action == GLFW_PRESS && key == GLFW_KEY_F1)
+    if (key == GLFW_KEY_F1)
     {
-        //renderer.toggleFullscreen();
+        if (action == GLFW_PRESS)
+        {
+            //renderer.toggleFullscreen();
+        }
+    }
+    else if (key == GLFW_KEY_ESC)
+    {
+        done = true;
     }
     else
     {
@@ -81,7 +90,7 @@ int main(int argc, char** argv)
     double LOGICS_PER_SEC = 30.0;
     Time logicLength = 1.0 / LOGICS_PER_SEC;
     
-    while (true)
+    while (!done)
     {        
         time = glfwGetTime() * 1.0;
                
@@ -90,8 +99,6 @@ int main(int argc, char** argv)
             while (time >= nextupdatetime)
             {
                 glfwPollEvents();
-                if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
-                     break;
                  
                 sceneHandler->update(nextupdatetime - lastupdatetime);
                 lastupdatetime = nextupdatetime;
@@ -107,8 +114,6 @@ int main(int argc, char** argv)
         else
         {
             glfwPollEvents();
-            if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
-                break;
 
             renderer->render(time - lastrendertime);
             lastrendertime = time;

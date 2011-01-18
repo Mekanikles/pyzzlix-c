@@ -205,14 +205,78 @@ void Scene_MainGame::tick()
                 if this->doLevelUpCounter > 3:
                     this->newLevel()
         */
+
+        this->board->updateBoard();
     }
 
 }
+
+
+
+static void sortBlocksZigZag(LinkedList<Block*>* blocks)
+{
+
+}                       
+
+void Scene_MainGame::removeBlocks(LinkedList<Block*> blocks)
+{
+    sortBlocksZigZag(&blocks);
+
+        //this->hourglass.addPause(len(blocks)*PAUSE_TIME_PER_BLOCK)
+        //this->hourglass.halt()
+/*
+        delay = 0.7 / float(len(blocks))
+
+        if delay > 0.08:
+            delay = 0.08
+
+        scale_blocks = blocks[:]
+        
+        def block_scale_done(block):
+            if(scale_blocks): 
+                Mixer().playSound(this->removeblocksound)
+                next_block = scale_blocks.pop()
+                this->addBlockScore(next_block)
+                next_block.fadeTo((0.0, 0.0, 0.0, 0.0), this->currentTime, delay, block_scale_done)
+                next_block.rotateTo(720.0, this->currentTime, delay)
+                next_block.scaleTo((4.0, 4.0), this->currentTime, 0.5)
+            else:
+                for block in blocks:
+                    this->board.clear(block.boardx, block.boardy)
+                this->hourglass.unhalt()
+                    
+        def block_wait_done(block):
+            block.scaleTo((1.0, 1.0), this->currentTime, 0.5, block_scale_done)
+
+        def block_wait_before_blink(b):
+            for block in blocks[:-1]:
+                block.fadeTo((1.0, 1.0, 1.0, 1.0), this->currentTime, 0.1)
+                block.doBlink()
+                
+            blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), this->currentTime, 0.1, block_wait_done)
+            blocks[-1].doBlink()
+
+        blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), this->currentTime, 0.1, block_wait_before_blink)
+
+*/
+
+}
+                          
 
 bool Scene_MainGame::handleEvent(Event* event)
 {
     switch (event->type)
     {
+        case EVENT_CIRCLE:
+        {
+            CircleEvent* cevent = (CircleEvent*)event;
+            LinkIterator<Block*> iter = cevent->blocks.getIterator();
+            for (;iter.isValid();iter.step())
+            {
+                iter.item()->doPulse();
+            }
+            
+        }
         case EVENT_KEY:
         {
             KeyEvent* keyevent = (KeyEvent*)event;

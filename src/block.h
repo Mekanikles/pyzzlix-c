@@ -21,8 +21,8 @@ const int MAX_BLOCKTYPES = 7;
 
 const int STATUS_NONE = 0;
 const int STATUS_MOVING = 1;
-const int STATUS_ON_CIRCLE = 4;
-const int STATUS_INSIDE_CIRCLE = 8;
+const int STATUS_IN_CIRCLE = 4;
+const int STATUS_ACTIVE_CIRCLE = 8;
 const int STATUS_ON_PATH = 16;
 const int STATUS_OFFSCREEN = 32;
 

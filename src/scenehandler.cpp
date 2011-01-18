@@ -52,18 +52,18 @@ void SceneHandler::pushScene(Scene* scene)
     if (scene->list != NULL)
     {
         fprintf(stderr, "Removed scene before push\n");
-        ((FastLinkedList<Scene>*)(scene->list))->releaseLink(scene);
+        scene->list->releaseLink(scene);
     }
-        
+
     this->sceneStack->addLink(scene);
 }
 
-
 void SceneHandler::removeScene(Scene* scene)
 {
-    if (scene->list != NULL)
-        ((FastLinkedList<Scene>*)(scene->list))->releaseLink(scene);
-
+    if (scene->list == this->sceneStack)
+        this->sceneStack->releaseLink(scene);
+    else
+        fprintf(stderr, "Tried to remove scene from wrong list!\n");
 }
 
 void SceneHandler::update(Time deltaTime)

@@ -26,6 +26,7 @@ class Scene_MainGame : public Scene
         void hide();
         
         void tick();
+        void removeBlocks(LinkedList<Block*> blocks);
         bool handleEvent(Event* event);
 
         void fillZigZag();

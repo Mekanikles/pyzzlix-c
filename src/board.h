@@ -2,6 +2,8 @@
 #ifndef _BOARD_H
 #define _BOARD_H
 
+#include "scenehandler.h"
+
 #include "sprite.h"
 
 #include "grid.h"
@@ -31,9 +33,9 @@ class Board : public Sprite
         Color glowColor;
         Time glowDuration;
         bool gameOver;
-
-        LinkedList<Sprite*> lastRotated;
-
+        
+        LinkedList< LinkedList<Block*> > foundCircles;
+    
         int blockTypeArray[MAX_BLOCKTYPES];
         int blockTypes;
 
@@ -45,15 +47,16 @@ class Board : public Sprite
         Board(int width, int height);
         virtual ~Board();
 
-        void moveBlockToCoord(Block* block, int boardx, int boardy);
-        void setBlockToCoord(Block* block, int boardx, int boardy);
-        void moveMarkerToCoord(int boardx, int boardy);
-        void setMarkerToCoord(int boardx, int boardy);
+        void moveBlockInGrid(Block* block, int boardx, int boardy);
+        void setBlockInGrid(Block* block, int boardx, int boardy);
+        void moveMarkerInGrid(int boardx, int boardy);
+        void setMarkerInGrid(int boardx, int boardy);
 
 
         void moveMarker(int dx, int dy);
         bool rotateMarker(int direction);
-
+        void handleCircle(LinkedList<Block*> circle, LinkedList<Block*>* blocks);
+        void findCircles(Block* startBlocks);
         bool rotateBlocks(int x, int y, int direction, int radius);
         
         int getRandomBlockType();
@@ -65,7 +68,9 @@ class Board : public Sprite
         void clear(int x, int y);
         void fillBuffer();
         bool full();
-        void addBlock(Block* block);        
+        void addBlock(Block* block);
+
+        void updateBoard();
 };
 
 #endif

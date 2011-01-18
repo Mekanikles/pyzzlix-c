@@ -7,6 +7,11 @@
 #include <string>
 using namespace std;
 
+const int ANIMATION_MODE_NORMAL = 0;
+const int ANIMATION_MODE_LOOP = 1;
+const int ANIMATION_MODE_PINGPONG = 2;
+const int ANIMATION_MODE_PINGPONGLOOP = 3;
+
 class Texture;
 class Image;
 

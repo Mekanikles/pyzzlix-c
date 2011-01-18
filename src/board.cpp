@@ -9,31 +9,37 @@
 #include "marker.h"
 #include "block.h"
 
-static double triangleArea(const Point& a, const Point& b, const Point& c)
+static double triangleArea(const Block* a, const Block* b, const Block* c)
 {  
-    return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+    return (b->boardx - a->boardx) * (c->boardy - a->boardy) - (c->boardx - a->boardx) * (b->boardy - a->boardy);
 }
 
-static double polygonArea(LinkedList<Point>* points)
+static bool isClockwise(LinkedList<Block*> circle)
 {
-    LinkNode<Point>* first = points->first;
-    LinkNode<Point>* prev = first->next;
-    LinkNode<Point>* next = prev->next;
     double area = 0;
 
-    while(next != 0)
-    {        
-        area += triangleArea(first->item, prev->item, next->item);
+    LinkIterator<Block*> piter1 = circle.getIterator();
+    LinkIterator<Block*> piter2 = circle.getIterator();
+    LinkIterator<Block*> piter3 = circle.getIterator();
 
-        prev = next;
-        next = next->next;
+    // Start iterators on succeeding blocks
+    piter2.step();
+    piter3.step();
+    piter3.step();
+    
+    while(piter3.isValid())
+    {        
+        area += triangleArea(piter1.item(), piter2.item(), piter3.item());
+
+        piter2.step();
+        piter3.step();
     }
     
-    return area;
+    return (area > 0);
 }
 
 Board::Board(int width, int height) : Sprite(),
-                                      grid(width, 2 * height),
+                                      grid(width, 2 * height, 0, height),
                                       blocksFalling(false),
                                       glowColor(1.0, 0.0, 0.0, 1.0),
                                       glowDuration(0.0),
@@ -61,7 +67,7 @@ Board::Board(int width, int height) : Sprite(),
     this->glow->fadeTo(Color(0.0, 0.0, 0.0, 0.0));
         
     this->marker = new Marker();
-    this->setMarkerToCoord(this->width / 2, this->height / 2);
+    this->setMarkerInGrid(this->width / 2, this->height / 2);
         
     this->addSprite(this->background);
     this->addSprite(this->marker);
@@ -79,36 +85,40 @@ Board::~Board()
     //fprintf(stderr, "ran destructor!\n");
 }
 
-void Board::moveBlockToCoord(Block* block, int boardx, int boardy)
+void Board::moveBlockInGrid(Block* block, int boardx, int boardy)
 {
     block->boardx = boardx;
     block->boardy = boardy;
+    
+    this->grid.set(boardx, boardy, block);
     block->moveTo(Point((boardx + 0.5f) * this->gridSlotSize,
                         (boardy + 0.5f) * this->gridSlotSize), 0.15);    
 }
 
-void Board::setBlockToCoord(Block* block, int boardx, int boardy)
+void Board::setBlockInGrid(Block* block, int boardx, int boardy)
 {
     block->boardx = boardx;
     block->boardy = boardy;
+    
+    this->grid.set(boardx, boardy, block); 
     block->moveTo(Point((boardx + 0.5f) * this->gridSlotSize,
                         (boardy + 0.5f) * this->gridSlotSize));    
 }
 
-void Board::moveMarkerToCoord(int boardx, int boardy)
+void Board::moveMarkerInGrid(int boardx, int boardy)
 {
     this->marker->boardx = boardx;
     this->marker->boardy = boardy;
-     
+
     this->marker->moveTo(Point(boardx * this->gridSlotSize,
                          boardy * this->gridSlotSize), 0.032);
 }
 
-void Board::setMarkerToCoord(int boardx, int boardy)
+void Board::setMarkerInGrid(int boardx, int boardy)
 {   
     this->marker->boardx = boardx;
     this->marker->boardy = boardy;
-     
+  
     this->marker->moveTo(Point(boardx * this->gridSlotSize,
                          boardy * this->gridSlotSize));
 }
@@ -124,7 +134,7 @@ void Board::moveMarker(int dx, int dy)
     
     if (dx != 0 || dy != 0)
     {
-        this->moveMarkerToCoord(this->marker->boardx + dx,
+        this->moveMarkerInGrid(this->marker->boardx + dx,
                             this->marker->boardy + dy);
         
         //mixer.playSound(self.movesound)
@@ -137,13 +147,75 @@ bool Board::rotateMarker(int direction)
     return rotateBlocks(this->marker->boardx, this->marker->boardy, direction, 1);
 }
 
-void Board::findCircles(LinkedList<Block*>* startBlocks)
+// TODO! Fix the corner problem!
+void Board::handleCircle(LinkedList<Block*> circle, LinkedList<Block*>* blocks)
+{  
+    LinkIterator<Block*> iiter = circle.getIterator();
+    ReverseLinkIterator<Block*> riter = circle.getReverseIterator();
+    
+    LinkIterator<Block*>* iter = &iiter;
+        
+    // If the blocks are ordered counterclockwise, iterate backwards instead
+    if (!isClockwise(circle))
+        iter = &riter;
+    
+    Block* lastBlock = circle.getLast();
+    Block* block = NULL;
+
+    // Mark whole circle as active circle
+    while (iter->isValid())
+    {
+        iter->item()->status |= STATUS_ACTIVE_CIRCLE;
+        iter->step();
+    }
+    
+    // Go through all blocks in circle, clockwise
+    iter->reset();
+    while (iter->isValid())
+    {
+        block = iter->item();
+
+        blocks->addItem(block);
+        
+        // Check the direction from the old block
+        // If the direction is left, the block
+        // must be on the bottom of the circle
+        // Add all blocks from that block upwards to block list
+        // Mark those block as circle blocks
+        if (block->boardx < lastBlock->boardx)
+        {
+            Block* b = this->grid.get(block->boardx, block->boardy - 1);
+            while(!(b == NULL || (b->status & STATUS_ACTIVE_CIRCLE)))
+            {
+                if (!(b->status & STATUS_IN_CIRCLE))
+                {
+                    blocks->addItem(b);
+                    b->status |= STATUS_IN_CIRCLE;
+                }
+                b = this->grid.get(b->boardx, b->boardy - 1);
+            }
+        }
+            
+        lastBlock = block;
+        iter->step();
+    }
+
+    // Unmark whole circle
+    iter->reset();
+    while (iter->isValid())
+    {
+        iter->item()->status &= ~STATUS_ACTIVE_CIRCLE;
+        iter->step();
+    }
+}
+
+void Board::findCircles(Block* startBlock)
 {
     static struct Finder
     {
             int width, height;
-            Grid* grid;
-            Finder(int width, int height, Grid* grid) : width(width), height(height), grid(grid) {}
+            Grid<Block>* grid;
+            Finder(int width, int height, Grid<Block>* grid) : width(width), height(height), grid(grid) {}
             
             Block* getNeighbor(Block* block, int x, int y)
             {
@@ -156,224 +228,198 @@ void Board::findCircles(LinkedList<Block*>* startBlocks)
                 return grid->get(x, y);
             }
             
-            void searchPath(Block* block, Block* start, LinkedList<Block*>* path, LinkedList< LinkedList<Block*>* >* circles)
+            void searchPath(Block* block, Block* start, LinkedList<Block*>* path, LinkedList< LinkedList<Block*> >* circles)
             {
-                if (block->status & STATUS_MOVING || block->status & STATUS_ON_CIRCLE || block->status & STATUS_OFFSCREEN || block->status & STATUS_ON_PATH)
-                    return;
-
-                // Mark the picked block and pick it
-                block->status |= STATUS_ON_PATH;
-                path->addItem(block);
-                
                 // If we found the way back to the start, save the path
-                if (path->getLength() >= 4 && block == start)
+                if (block == start && path->getLength() >= 4)
                 {
-                    circles->addItem(path->copy());
-                    block->status &= !STATUS_ON_PATH;
+                    circles->addItem(*path);
                     return;
                 }
+
+                // Make sure this block is valid for selecting
+                if (block->status & STATUS_ON_PATH ||
+                    block->status & STATUS_MOVING ||
+                    block->status & STATUS_IN_CIRCLE ||
+                    block->status & STATUS_OFFSCREEN)
+                    return;
+
+                // Select the block and mark it
+                path->addItem(block);
+                block->status |= STATUS_ON_PATH;
 
                 Block* lastBlock = path->getFirst();
                 Block* nextBlock;
 
-                nextBlock == this->getNeighbor(block, 0, 1);
+
+                nextBlock = this->getNeighbor(block, 0, 1);
                 if (nextBlock != lastBlock && nextBlock != NULL && nextBlock->type == start->type)
-                    finder(nextBlock, start, path, circles);
+                    this->searchPath(nextBlock, start, path, circles);
                 
-                nextBlock == this->getNeighbor(block, 1, 0);
-                if (nextBlock != lastBlock && nextBlock != NULL)
-                    finder(nextBlock, start, path, circles);
+                nextBlock = this->getNeighbor(block, 1, 0);
+                if (nextBlock != lastBlock && nextBlock != NULL && nextBlock->type == start->type)
+                   this->searchPath(nextBlock, start, path, circles);
 
-                nextBlock == this->getNeighbor(block, -1, 0);
-                if (nextBlock != lastBlock && nextBlock != NULL)
-                    finder(nextBlock, start, path, circles);
+                nextBlock = this->getNeighbor(block, -1, 0);
+                if (nextBlock != lastBlock && nextBlock != NULL && nextBlock->type == start->type)
+                    this->searchPath(nextBlock, start, path, circles);
 
-                nextBlock == this->getNeighbor(block, 0, -1);
-                if (nextBlock != lastBlock && nextBlock != NULL)
-                    finder(nextBlock, start, path, circles);
+                nextBlock = this->getNeighbor(block, 0, -1);
+                if (nextBlock != lastBlock && nextBlock != NULL && nextBlock->type == start->type)
+                    this->searchPath(nextBlock, start, path, circles);
 
                 // The current block is no longer considered picked
-                block->status &= !STATUS_ON_PATH;
-                path->
+                block->status &= ~STATUS_ON_PATH;
+                path->removeFirst();
             }
-    } finder(this->width, this->height, this->grid);
-
-
-    LinkedList< LinkedList<Block*>* > foundCircles;
+    } finder(this->width, this->height, &this->grid);
     
     
-    // Go through all start blocks
-    // Find all complete circle paths from each block
-    LinkIterator<Block*> iter = startBlocks->getHeadIterator();
-    while(!iter.isAtEnd())
+    LinkedList< LinkedList<Block*> > circles;
+    LinkedList<Block*> workPath;
+
+    // Find a path originating from startblock
+    finder.searchPath(startBlock, startBlock, &workPath, &circles);
+    
+    workPath.clear();
+    
+    if (circles.getLength() > 0)
     {
-        LinkedList< LinkedList<Block*>* > circles;
-        LinkedList<Block*> workingPath;
-        
-        finder.searchPath(iter.item(), iter.item(), workingPath, circles);
-
-        workPath.clear();
-        
-        if (circles.length > 0)
+        // For each circle path, save the longest
+        LinkIterator< LinkedList<Block*> > circiter = circles.getIterator();
+        LinkedList<Block*> longestCircle = circiter.item();
+        circiter.step();
+        while(circiter.isValid())
         {
-            // For each circle path, save the longest
-            LinkIterator< LinkedList<Block*>* > iter = circles->getHeadIterator();
-            LinkedList<Block*>* longestCircle = iter.item;
-            iter.forward();
-            while(!iter.isAtEnd())
-            {
-                if (iter.item->getLength() > longestCircle->getLength())
-                {
-                    longestCircle = iter.item;
-                }
-                
-                iter.forward();
-            }
-
-            foundCircles->addItem(iter.item->copy());
+            // Delete all circles but the longest
+            if (circiter.item().getLength() > longestCircle.getLength())
+                longestCircle = circiter.item();
+            
+            circiter.step();
         }
         
-        circles.clear();
+        // Mark all blocks in circle and add to found circles
+        LinkIterator<Block*> blockiter = longestCircle.getIterator();
+        while(blockiter.isValid())
+        {
+            blockiter.item()->status |= STATUS_IN_CIRCLE;
+            blockiter.step();
+        }
+        this->foundCircles.addItem(longestCircle);
     }
     
-
-
-    
-    
-    /*
-        if rotation_circles or fall_circles:
-            pygame.event.post(pygame.event.Event(EVENT_CIRCLE_FOUND, fall_blocks=fall_circles, rotation_blocks=rotation_circles))
-            return True
-            */
-    return foundCircles;
+    circles.clear();
 }
 
 bool Board::rotateBlocks(int x, int y, int direction, int radius)
 {
-    struct Coord
-    {
-            int x, y;
-            Coord(int x, int y): x(x), y(y) {}
-            Coord() : x(0), y(0) {}
-    };
-    
-    struct CoordFactory
-    {
-            int width, height;
-            CoordFactory(int width, int height):
-                width(width), height(height) {}
-            Coord coord(int x, int y) {
-                return Coord((x + this->width) % this->width,
-                             (y + this->height) % this->height); }
-    } cf(this->width, this->height);
-
     // Cannot rotate radius < 1
     if (radius < 1)
         return false;
 
     // Create a number of orbits equal to the radius
-    Coord** orbits = new Coord*[radius];
-    // Calculate length of each orbit and create space
-    for (int orbit = 1; orbit <= radius; orbit++)
-    {
-        orbits[orbit - 1] = new Coord[orbit * 4 + (orbit - 1) * 4];
-        
-    }
+    LinkedList<Block*> orbits[radius];
      
     //Fill each orbit with block position data, clockwise
-    for (int orbit = 1; orbit <= radius; orbit++)
+    for (int orbit = 0; orbit < radius; orbit++)
     {
-        int offset = 0;
         // Top row, from top left block
-        for (int j = 0; j < orbit * 2; j++)
+        for (int j = 0; j < (orbit + 1) * 2; j++)
         {
-            orbits[orbit - 1][j + offset] = cf.coord(x - orbit + j, y - orbit); 
+            orbits[orbit].addItem(this->grid.get(x - orbit - 1 + j, y - orbit - 1));
         }
-        offset += orbit * 2;
+
         // Right row, from top right block
         // Do not count corner blocks
-        for (int j = 0; j < (orbit - 1) * 2; j++)
-        {
-            orbits[orbit - 1][j + offset] = cf.coord(x + orbit - 1, y - orbit + 1 + j); 
-        }
-        offset += (orbit - 1) * 2;
-        // Bottom row, from bottom right block
         for (int j = 0; j < orbit * 2; j++)
         {
-            orbits[orbit - 1][j + offset] = cf.coord(x + orbit - 1 - j, y + orbit - 1); 
+            orbits[orbit].addItem(this->grid.get(x + orbit, y - orbit + j)); 
         }
-        offset += orbit * 2;
+
+        // Bottom row, from bottom right block
+        for (int j = 0; j < (orbit + 1) * 2; j++)
+        {
+            orbits[orbit].addItem(this->grid.get(x + orbit - j, y + orbit));
+        }
+
         // Left row, from bottom left block
         // Do not count corner blocks
-        for (int j = 0; j < (orbit - 1) * 2; j++)
+        for (int j = 0; j < orbit * 2; j++)
         {
-            orbits[orbit - 1][j + offset] = cf.coord(x - orbit, y + orbit - 2 - j); 
+            orbits[orbit].addItem(this->grid.get(x - orbit - 1, y + orbit - 1 - j)); 
         }
     }
 
-
-    // Go through the generated list of positions and check if anyone
+    // Go through the generated list of blocks and check if anyone
     // is locked, in which case we will return false
     Block* block;
-    for (int orbit = 1; orbit <= radius; orbit++)
+    for (int orbit = 0; orbit < radius; orbit++)
     {
-        for (int i = 0; i < orbit * 4 + (orbit - 1) * 4; i++)
+        LinkIterator<Block*> iter = orbits[orbit].getIterator();
+        
+        while (iter.isValid())
         {
-            int posx = orbits[orbit - 1][i].x;
-            int posy = orbits[orbit - 1][i].y;
-            block = this->grid.get(posx, posy + this->height);
+            block = iter.item();
             
             if ((block == NULL) ||
                 (block->status & STATUS_MOVING) ||
-                (block->status & STATUS_ON_CIRCLE) ||
+                (block->status & STATUS_IN_CIRCLE) ||
                 (block->status & STATUS_OFFSCREEN))
-            {
-                for (int i = 0; i < radius; i++)
-                {
-                    delete[] orbits[i];
-                }
-                delete[] orbits;
-                
+            {                
                 return false;
             }
+
+            iter.step();
         }
     }
-
-    if (direction > 0)
-        direction = 1;
-    else
-        direction = -1;
     
-    // Go through the generated list of points and switch them
-    // along the circle in the direction
+    // Go through the generated list of blocks and switch them
+    // along the circle in the given direction
     Block * nextBlock;
-    for (int orbit = 1; orbit <= radius; orbit++)
+    for (int orbit = 0; orbit < radius; orbit++)
     {
-        int orbitlength = orbit * 4 + (orbit - 1) * 4;
-        int orbitpos = 0;
-        int posx = orbits[orbit - 1][orbitpos].x;
-        int posy = orbits[orbit - 1][orbitpos].y;
-        block = this->grid.get(posx, posy + this->height);
-        for (int i = 0; i < orbitlength; i++)
-        {
-            // Move orbitpos along path in direction
-            // Make sure orbitpos is always positive, in range
-            orbitpos = (orbitpos + direction + orbitlength) % orbitlength;
-            posx = orbits[orbit - 1][orbitpos].x;
-            posy = orbits[orbit - 1][orbitpos].y;
-            nextBlock = this->grid.get(posx, posy + this->height);
+        int orbitlength = orbits[orbit].getLength();
+        
+        LinkIterator<Block*> witer = orbits[orbit].getIterator();
+        ReverseLinkIterator<Block*> rwiter = orbits[orbit].getReverseIterator();
             
-            this->grid.set(posx, posy + this->height, block);
-            this->moveBlockToCoord(block, posx, posy);
+        LinkIterator<Block*>* iter;
+        if (direction > 0)
+            iter = &rwiter;
+        else
+            iter = &witer;
+        
+        block = iter->item();
+        int firstposx = block->boardx;
+        int firstposy = block->boardy;
+
+        for (int i = 0; i < orbitlength - 1; i++)
+        {
+            // Move along path in direction
+            iter->step();
+        
+            nextBlock = iter->item();
+            int posx = nextBlock->boardx;
+            int posy = nextBlock->boardy;
+            
+            this->moveBlockInGrid(block, posx, posy);
             block = nextBlock;
         }
+
+        this->moveBlockInGrid(block, firstposx, firstposy);
+        
     }
 
-    for (int i = 0; i < radius; i++)
+    // Detect new circles for all blocks that were moved
+    for (int orbit = 0; orbit < radius; orbit++)
     {
-        delete orbits[i];
+        LinkIterator<Block*> iter = orbits[orbit].getIterator();           
+        while (iter.isValid())
+        {
+            this->findCircles(iter.item());
+            iter.step();
+        }
     }
-    delete[] orbits;
     
     return true;
 }
@@ -445,7 +491,7 @@ void Board::reset()
 
 void Board::clear(int x, int y)
 {
-    Block* block = this->grid.remove(x, y + this->height);
+    Block* block = this->grid.remove(x, y);
     delete block;
 }
 
@@ -453,11 +499,13 @@ void Board::fillBuffer()
 {
     for (int x = 0; x < this->width; x++)
     {
-        for (int y = 0; y < this->height; y++)
+        for (int y = -this->height; y < 0; y++)
         {
             if (!this->grid.get(x, y))
-                this->grid.set(x, y, new Block(x, y - this->height,
-                this->getRandomBlockType(), this->currentTime));
+            {
+                this->grid.set(x, y, new Block(x, y,
+                               this->getRandomBlockType(), this->currentTime));
+            }
         }
     }
 
@@ -468,7 +516,7 @@ bool Board::full()
 {
     for (int x = 0; x < this->width; x++)
     {
-        for (int y = this->height; y < this->height * 2; y++)
+        for (int y = -this->height; y < this->height; y++)
         {
             if (!this->grid.get(x, y))
                 return false;
@@ -488,15 +536,39 @@ void Board::addBlock(Block* block)
         return;
     }
 
-    if (this->grid.get(x, y + this->height) == NULL)
+    if (this->grid.get(x, y) == NULL)
     {
-        this->grid.set(x, y + this->height, block);
+        this->grid.set(x, y, block);
     }
     else
     {
         return;
     }
 
-    this->setBlockToCoord(block, x, y);
+    this->setBlockInGrid(block, x, y);
     this->blockContainer->addSprite(block);
+}
+
+void Board::updateBoard()
+{
+    if (this->foundCircles.getLength() > 0)
+    {
+        fprintf(stderr, "Found %i circle(s)!\n", this->foundCircles.getLength());
+
+        LinkedList<Block*> blocks;
+        
+        LinkIterator< LinkedList<Block*> > iter = this->foundCircles.getIterator();
+        while (iter.isValid())
+        {
+            this->handleCircle(iter.item(), &blocks);
+            iter.step();
+        }
+
+        SceneHandler* sceneHandler = SceneHandler::getInstance();
+        sceneHandler->handleEvent(new CircleEvent(blocks, false));
+        
+        this->foundCircles.clear();
+    }
+
+        
 }

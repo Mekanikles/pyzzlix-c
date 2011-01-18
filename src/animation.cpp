@@ -14,7 +14,7 @@ Animation::Animation(const string& texturename, int width, int height,
     }
     else
     {
-        this->mode = mode;
+        this->mode = ANIMATION_MODE_NORMAL;
     }
     
     this->reverse = reverse;
@@ -69,7 +69,7 @@ Image* Animation::getFrameImage(Time currentTime)
     if (this->frameCount <= 0)
         return NULL;
     
-    while (this->frameTimer + this->frameLengths[this->currentFrame] <= currentTime)
+    while (this->direction != 0 && this->frameTimer + this->frameLengths[this->currentFrame] <= currentTime)
     {
         this->frameTimer += this->frameLengths[this->currentFrame];
         this->currentFrame += 1 * this->direction;
@@ -88,8 +88,9 @@ Image* Animation::getFrameImage(Time currentTime)
                 }
                 else
                 {
-                    this->frameCount = 0;
-                    this->currentFrame = this->frameCount - 1;
+                    this->direction = 0;
+                    this->currentFrame = 0;
+                    break;
                 }
             }
             else if (this->mode == ANIMATION_MODE_PINGPONGLOOP)
@@ -99,8 +100,9 @@ Image* Animation::getFrameImage(Time currentTime)
             }
             else
             {
-                this->frameCount = 0;
+                this->direction = 0;
                 this->currentFrame = this->frameCount - 1;
+                break;
             }
         }
         else if (this->currentFrame < 0)
@@ -113,8 +115,9 @@ Image* Animation::getFrameImage(Time currentTime)
             {
                 if (!this->reverse)
                 {
-                    this->frameCount = 0;
+                    this->direction = 0;
                     this->currentFrame = 0;
+                    break;
                 }
                 else
                 {
@@ -129,8 +132,9 @@ Image* Animation::getFrameImage(Time currentTime)
             }
             else
             {
-                this->frameCount = 0;
+                this->direction = 0;
                 this->currentFrame = 0;
+                break;
             }
         }
     }      

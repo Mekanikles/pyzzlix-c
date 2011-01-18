@@ -30,8 +30,9 @@ void Sprite::addSprite(Sprite* sprite)
     if (sprite == NULL)
         return;
     
-    if (sprite->list != NULL && sprite->list != this->subSprites)
+    if (sprite->list != NULL)
     {
+        fprintf(stderr, "Removing sprite from current list before adding!\n");
         sprite->list->releaseLink(sprite);
     }
     this->subSprites->addLink(sprite);
@@ -42,7 +43,7 @@ void Sprite::removeSprite(Sprite* sprite)
     if (sprite == NULL)
         return;
 
-    if (sprite->list != NULL && sprite->list == this->subSprites)
+    if (sprite->list == this->subSprites)
     {
         this->subSprites->releaseLink(sprite);
     }
@@ -70,7 +71,11 @@ void Sprite::update(Time currentTime)
 {
     //this->lastTime = this->currentTime;
     this->currentTime = currentTime;
+    
+    if (this->currentAnimation != NULL)
+        this->currentImage = this->currentAnimation->getFrameImage(this->currentTime);
 
+    
     Sprite* s = this->subSprites->first;
     while (s != NULL)
     {

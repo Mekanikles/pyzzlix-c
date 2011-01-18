@@ -19,7 +19,6 @@ class Scene : public Linkable<Scene>
         
         bool blockedThisTick;
         
-        
         FastLinkedList<Sprite>* sprites;
         
         
