@@ -50,7 +50,7 @@ void Scene_MainGame::resetGame()
         this->blocksToLevel = this->getBlocksToLevel()
         this->activeBlock = this->getActiveBlock()
         this->background.setTheme(this->activeBlock)
- 4       this->blockCount = 0
+        this->blockCount = 0
         this->score = 0
         this->board.reset()
         this->hourglass.reset(HOURGLASS_DEFAULT)*/
@@ -109,7 +109,8 @@ void Scene_MainGame::moveInWindows()
 {
     fprintf(stderr, "Moving in windows.\n");    
     this->windowsInPlace = true;
-    this->board->moveTo(Point(24.0, 16.0), 0.3);
+  
+    this->board->moveTo(Point(24.0, 16.0), 0.5);
     //this->scoreboard.moveTo((208.0, 8.0), this->currentTime, 0.5)
     //this->levelboard.moveTo((208.0, 80.0), this->currentTime, 0.5)
     //this->hourglass.moveTo((208, 136), this->currentTime, 0.5)

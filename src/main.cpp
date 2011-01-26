@@ -91,30 +91,27 @@ int main(int argc, char** argv)
     Time logicLength = 1.0 / LOGICS_PER_SEC;
     
     while (!done)
-    {        
-        time = glfwGetTime() * 1.0;
-               
+    {
+        // Update all timers
+        time = glfwGetTime() * 1.3;
+        sceneHandler->updateTimers(time - lastupdatetime);
+        lastupdatetime = time;
+
+        glfwPollEvents();
+        
         if (time >= nextupdatetime)
         {
-            while (time >= nextupdatetime)
-            {
-                glfwPollEvents();
-                 
-                sceneHandler->update(nextupdatetime - lastupdatetime);
-                lastupdatetime = nextupdatetime;
-           
-                sceneHandler->tickScenes();
-                renderer->render(0);
-                lastrendertime = time;
-
-                nextupdatetime += logicLength;
-                fpscounter += 1;
-            }
+            // Run all scenes, one tick "ahead" of real time
+            sceneHandler->tickScenes(logicLength);
+            
+            nextupdatetime += logicLength;
+            
+            renderer->render(0);
+            lastrendertime = time;
+            fpscounter += 1;
         }
         else
         {
-            glfwPollEvents();
-
             renderer->render(time - lastrendertime);
             lastrendertime = time;
             fpscounter += 1;
@@ -128,7 +125,7 @@ int main(int argc, char** argv)
         }
         
         fflush(stderr);    
-//        glfwSleep(1.0/10.0);
+        glfwSleep(1.0/60.0);
     }
     
     

@@ -69,7 +69,8 @@ bool Renderer::setDisplay()
     glOrtho(0, 320, 240, 0, 0, 100);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
+    glClear(GL_COLOR_BUFFER_BIT);
+    
     Resources::getInstance()->loadAllTextures();
     
     return true;
@@ -87,20 +88,22 @@ void Renderer::toggleFullScreen()
     this->setFullscreen(!this->fullscreen);
 }
 
-void Renderer::drawSprite(Sprite* sprite, Time currentTime)
+void Renderer::drawSprite(Sprite* sprite, float progress)
 {
     if (sprite->currentImage == NULL && sprite->subSprites == NULL)
         return;
 
     glPushMatrix();
 
-    Point p = sprite->getPosition(currentTime);
-                    
+    //Point p = sprite->position.getVal();
+    
+    Point p = sprite->position.calcVal(progress);
+    
     glTranslatef(p.x, p.y, 0.0f);
-    glRotatef(sprite->getRotation(currentTime), 0.0f, 0.0f, 1.0f);
-    Vector s = sprite->getScale(currentTime);
+    glRotatef(sprite->rotation.calcVal(progress), 0.0f, 0.0f, 1.0f);
+    Vector s = sprite->scaleVector.calcVal(progress);
     glScalef(s.x, s.y, 1.0f);
-    Color c = sprite->getColor(currentTime);
+    Color c = sprite->color.calcVal(progress);
     glColor4f(c.r, c.g, c.b, c.a);
 
 
@@ -135,7 +138,7 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
         Sprite* s = sprite->subSprites->first;
         while(s != NULL)
         {
-            this->drawSprite(s, currentTime);
+            this->drawSprite(s, progress);
             s = s->next;
         }
         
@@ -146,15 +149,18 @@ void Renderer::drawSprite(Sprite* sprite, Time currentTime)
 
 void Renderer::renderScene(Scene* scene)
 {
-    if (!scene->blockedThisTick)
-        scene->renderTime += this->deltaTime;
-
-    //fprintf(stderr, "rendertime: %f\n", scene->renderTime);
-
     Sprite* s = scene->sprites->first;
     while(s != NULL)
     {
-        this->drawSprite(s, scene->renderTime);  
+        Time progress = (scene->realTime - scene->oldTime) / (scene->currentTime - scene->oldTime);
+              
+        this->drawSprite(s, progress);
+        
+        //fprintf(stderr, "Render: (%f : %f)\n", scene->realTime, scene->currentTime);
+        if (scene->realTime > scene->currentTime)
+        {
+            fprintf(stderr, "    RENDERTIME > CURRENTIME!\n");
+        }
         s = s->next;
     }
 }

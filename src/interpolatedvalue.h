@@ -2,24 +2,30 @@
 #define _INTERPOLATEDVALUE_H
 
 #include "time.h"
+#include "linkedlist.h"
+
+
+
 
 template <typename T>
 class InterpolatedValue
 {
-    private:
-        T val;
-        T refval;
-        Time time;
-        Time reftime;
-
-        void calcVal(Time currentTime);
     public:
+        T oldVal;
+        T newVal;
+        
+        LinkedList<T> waypoints;
 
         InterpolatedValue();
         InterpolatedValue(const T& val);
-        T getVal(Time currentTime);
-        void setVal(T val, Time currentTime, Time duration = 0.0);
-        void changeVal(T val, Time currentTime, Time duration = 0.0);
+        T getVal();
+        T calcVal(float factor);
+        void setTo(T val);
+        void forceTo(T val);
+        void setOldVal(T val);
+        void setNewVal(T val);
+        void addWaypoint(T val, Time time);
+        void clearWaypoints();
 };
 
 #include "interpolatedvalue.hpp"

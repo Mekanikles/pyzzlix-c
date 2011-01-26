@@ -7,11 +7,13 @@
 #include "color.h"
 #include "time.h"
 
+#include "mover.h"
+
 #include "interpolatedvalue.h"
 
 struct Image;
 class Animation;
-
+class MoveBehaviour;
 
 class Sprite : public Linkable<Sprite>
 {
@@ -19,7 +21,6 @@ class Sprite : public Linkable<Sprite>
         bool softblend;
         
         Time currentTime;
-        Time lastTime;
         
         FastLinkedList<Sprite>* subSprites;
         Image* currentImage;
@@ -27,10 +28,19 @@ class Sprite : public Linkable<Sprite>
         Point center;
 
         InterpolatedValue<Point> position;
-        InterpolatedValue<Vector> scalevector;
+        InterpolatedValue<Vector> scaleVector;
         InterpolatedValue<Color> color;
         InterpolatedValue<float> rotation;
-        
+
+        MoveBehaviour* position_behaviour;
+        MoveBehaviour* scale_behaviour;
+        MoveBehaviour* color_behaviour;
+        MoveBehaviour* rotation_behaviour;
+
+        Mover<Point>* position_mover;
+        Mover<Vector>* scale_mover;
+        Mover<Color>* color_mover;
+        Mover<float>* rotation_mover;
         
         Sprite(Time currentTime = 0);
         virtual ~Sprite();
@@ -41,21 +51,17 @@ class Sprite : public Linkable<Sprite>
         void setImage(Image* image);
         void setAnimation(Animation* animation);
         
-        Point getPosition(Time currentTime = -1);
-        void move(Point pos, Time duration = 0.0);
-        void moveTo(Point pos, Time duration = 0.0);
+        Point getPosition();
+        void moveTo(Point position, Time duration = 0.0);
 
-        Vector getScale(Time currentTime = -1);
-        void scale(Vector scale, Time duration = 0.0);
+        Vector getScale();
         void scaleTo(Vector scale, Time duration = 0.0);    
 
-        float getRotation(Time currentTime = -1);
-        void rotate(float angle, Time duration = 0.0);
-        void rotateTo(float angle, Time duration = 0.0);
+        float getRotation();
+        void rotateTo(float rotation, Time duration = 0.0);
 
-        Color getColor(Time currentTime = -1);
-        void fade(Color pos, Time duration = 0.0);
-        void fadeTo(Color pos, Time duration = 0.0);
+        Color getColor();
+        void fadeTo(Color color, Time duration = 0.0);
         
         void update(Time currentTime);
 };

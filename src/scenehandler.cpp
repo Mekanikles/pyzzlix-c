@@ -66,7 +66,7 @@ void SceneHandler::removeScene(Scene* scene)
         fprintf(stderr, "Tried to remove scene from wrong list!\n");
 }
 
-void SceneHandler::update(Time deltaTime)
+void SceneHandler::updateTimers(Time deltaTime)
 {
     bool blocked = false;
 
@@ -75,7 +75,7 @@ void SceneHandler::update(Time deltaTime)
     {
         if (!blocked)
         {
-            s->update(deltaTime);
+            s->updateTimer(deltaTime);
             s->blockedThisTick = false;
         }
         else
@@ -90,11 +90,24 @@ void SceneHandler::update(Time deltaTime)
     }
 }
 
-void SceneHandler::tickScenes()
+void SceneHandler::tickScenes(Time frameLength)
 {
+    // Update all objects in scenes
     Scene* s = this->sceneStack->first;
     while (s != NULL)
-    {   
+    {
+        s->updateLogic(frameLength);
+        
+        if (s->isUpdateBlocker())
+            break;
+        
+        s = s->next;
+    }
+    
+    // Do scene ticks
+    s = this->sceneStack->first;
+    while (s != NULL)
+    {
         s->tick();
         
         if (s->isUpdateBlocker())

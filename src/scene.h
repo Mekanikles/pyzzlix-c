@@ -1,3 +1,4 @@
+
 #ifndef _SCENE_H
 #define _SCENE_H
 
@@ -12,10 +13,13 @@ class Scene : public Linkable<Scene>
 {
     public:
         
+        Time realTime;
+        
         Time currentTime;
-        Time renderTime;
+        Time oldTime;
         bool renderBlocker;
         bool updateBlocker;
+        
         
         bool blockedThisTick;
         
@@ -24,8 +28,9 @@ class Scene : public Linkable<Scene>
         
         Scene();
         virtual ~Scene();
-        
-        void update(Time deltaTime);
+
+        void updateTimer(Time deltaTime);
+        void updateLogic(Time frameLength);
         virtual void tick() = 0;
         virtual bool handleEvent(Event* event);    
         bool isRenderBlocker();

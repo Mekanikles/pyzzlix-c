@@ -64,7 +64,7 @@ Board::Board(int width, int height) : Sprite(),
     this->glow = new Sprite();
     this->glow->setImage(Resources::getInstance()->getImage("windowglows", 24, 0, 176, 232));
     this->glow->moveTo(Point(0.0, 0.0));
-    this->glow->fadeTo(Color(0.0, 0.0, 0.0, 0.0));
+    this->glow->fadeTo(Color(1.0, 0.7, 0.2, 1.0));
         
     this->marker = new Marker();
     this->setMarkerInGrid(this->width / 2, this->height / 2);
@@ -73,7 +73,7 @@ Board::Board(int width, int height) : Sprite(),
     this->addSprite(this->marker);
     this->addSprite(this->blockContainer);
     this->addSprite(this->border);
-    this->addSprite(this->glow);
+    this->border->addSprite(this->glow);
 
     this->reset();
 
@@ -111,7 +111,7 @@ void Board::moveMarkerInGrid(int boardx, int boardy)
     this->marker->boardy = boardy;
 
     this->marker->moveTo(Point(boardx * this->gridSlotSize,
-                         boardy * this->gridSlotSize), 0.032);
+                         boardy * this->gridSlotSize), 0.05);
 }
 
 void Board::setMarkerInGrid(int boardx, int boardy)

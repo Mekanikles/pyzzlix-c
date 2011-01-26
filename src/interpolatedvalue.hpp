@@ -1,64 +1,63 @@
 
 template <typename T>
-InterpolatedValue<T>::InterpolatedValue():
-    time(0.0), reftime(0.0)
+InterpolatedValue<T>::InterpolatedValue()
 {
 }
 
 template <typename T>
 InterpolatedValue<T>::InterpolatedValue(const T& val):
-    val(val), refval(val), time(0.0), reftime(0.0)
+    oldVal(val), newVal(val)
 {
+}
+
+template <typename T>
+T InterpolatedValue<T>::getVal()
+{
+    return this->newVal;
+}
+
+template <typename T>
+T InterpolatedValue<T>::calcVal(float factor)
+{
+    return this->newVal - (this->newVal - this->oldVal) * (1.0 - factor);
+}
+
+template <typename T>
+void InterpolatedValue<T>::setTo(T val)
+{
+    this->oldVal = this->newVal;
+    this->newVal = val;
+}
+
+template <typename T>
+void InterpolatedValue<T>::forceTo(T val)
+{
+    this->oldVal = val;
+    this->newVal = val;
+}
+
+template <typename T>
+void InterpolatedValue<T>::setOldVal(T val)
+{
+    this->oldVal = val;
+}
+
+template <typename T>
+void InterpolatedValue<T>::setNewVal(T val)
+{
+    this->newVal = val;
+}
+
+template <typename T>
+void InterpolatedValue<T>::addWaypoint(T val, Time time)
+{
+
 
 }
 
 template <typename T>
-void InterpolatedValue<T>::calcVal(Time currentTime)
+void InterpolatedValue<T>::clearWaypoints()
 {
-    if (currentTime <= this->time)
-        return;
-    
-    if (currentTime >= this->reftime)
-    {
-        this->val = this->refval;
-        this->time = currentTime;
-    }
-    else
-    {
-        double factorT = (this->reftime - currentTime) / (this->reftime - this->time);
-        this->val = this->refval - (this->refval - this->val) * factorT;
-        this->time = currentTime;
-    }
-}
 
-template <typename T>
-T InterpolatedValue<T>::getVal(Time currentTime)
-{
-    this->calcVal(currentTime);
-    return this->val;
-}
 
-template <typename T>
-void InterpolatedValue<T>::setVal(T val, Time currentTime, Time duration)
-{
-    if (duration == 0.0)
-    {
-        this->refval = val;
-        this->val = val;
-        this->reftime = currentTime;
-    }
-    else
-    {
-        this->calcVal(currentTime);
-        this->refval = val;
-        this->reftime = currentTime + duration;
-    }
-}
-
-template <typename T>
-void InterpolatedValue<T>::changeVal(T val, Time currentTime, Time duration)
-{
-    this->calcVal(currentTime);
-    this->refval = this->val + val;
-    this->reftime = currentTime + duration;
 }

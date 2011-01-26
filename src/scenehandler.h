@@ -23,8 +23,8 @@ class SceneHandler
         
         void pushScene(Scene* scene);
         void removeScene(Scene* scene);
-        void update(Time deltaTime);
-        void tickScenes();
+        void updateTimers(Time deltaTime);
+        void tickScenes(Time frameLength);
         
         void handleEvent(Event* event);  
 };

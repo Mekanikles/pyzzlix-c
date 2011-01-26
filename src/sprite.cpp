@@ -2,23 +2,33 @@
 
 #include <stdio.h>
 #include "animation.h"
-
+#include "movebehaviour.h"
+#include "mover.h"
 
 Sprite::Sprite(Time currentTime):
     softblend(false),         
     currentTime(currentTime),
-    lastTime(currentTime),
     subSprites(new FastLinkedList<Sprite>()),
     currentImage(NULL),
     currentAnimation(NULL), 
     center(Point(0.0, 0.0)),
     position(Point(0.0, 0.0)),
-    scalevector(Vector(1.0, 1.0)),
+    scaleVector(Vector(1.0, 1.0)),
     color(Color(1.0f, 1.0f, 1.0f, 1.0f)),
     rotation(0.0f)
 {
 
+    position_behaviour = new MoveBehaviour_Decelerator(2);
+    scale_behaviour = new MoveBehaviour();
+    color_behaviour = new MoveBehaviour();
+    rotation_behaviour = new MoveBehaviour();
+
+    position_mover = NULL;
+    scale_mover = NULL;
+    color_mover = NULL;
+    rotation_mover = NULL;
 }
+
 Sprite::~Sprite()
 {
     delete this->subSprites;
@@ -75,6 +85,18 @@ void Sprite::update(Time currentTime)
     if (this->currentAnimation != NULL)
         this->currentImage = this->currentAnimation->getFrameImage(this->currentTime);
 
+    // Update all movers
+    if (this->position_mover != NULL)
+        position_mover->updateValue(this->currentTime);
+    
+    if (this->scale_mover != NULL)
+        scale_mover->updateValue(this->currentTime);
+
+    if (this->color_mover != NULL)
+        color_mover->updateValue(this->currentTime);
+
+    if (this->rotation_mover != NULL)
+        rotation_mover->updateValue(this->currentTime);
     
     Sprite* s = this->subSprites->first;
     while (s != NULL)
@@ -84,73 +106,95 @@ void Sprite::update(Time currentTime)
     }
 }
 
-Point Sprite::getPosition(Time currentTime)
+Point Sprite::getPosition()
 {
-    if (currentTime == -1)
-        return this->position.getVal(this->currentTime);
-    else
-        return this->position.getVal(currentTime);
+    return this->position.getVal();
 }
-void Sprite::move(Point pos, Time duration)
+void Sprite::moveTo(Point position, Time duration)
 {
-    return this->position.changeVal(pos, this->currentTime, duration);
-}
-void Sprite::moveTo(Point pos, Time duration)
-{
-    return this->position.setVal(pos, this->currentTime, duration);    
+    if (this->position_mover != NULL)
+    {
+        this->position_mover->updateValue(this->currentTime);
+        delete this->position_mover;
+    }
+
+    if (duration <= 0.0)
+    {
+        this->position.forceTo(position);
+        return;
+    }
+    
+    this->position_mover = new Mover<Point>(this->position_behaviour,
+                                            &this->position, this->currentTime,
+                                            position, duration);
 }
 
-Vector Sprite::getScale(Time currentTime)
+Vector Sprite::getScale()
 {
-    if (currentTime == -1)
-        return this->scalevector.getVal(this->currentTime);
-    else
-        return this->scalevector.getVal(currentTime);
+    return this->scaleVector.getVal();
+}
+void Sprite::scaleTo(Vector scaleVector, Time duration)
+{
+    if (this->scale_mover != NULL)
+    {
+        this->scale_mover->updateValue(this->currentTime);
+        delete this->scale_mover;
+    }
+
+    if (duration <= 0.0)
+    {
+        this->scaleVector.forceTo(scaleVector);
+        return;
+    }
+    
+    this->scale_mover = new Mover<Vector>(this->scale_behaviour,
+                                            &this->scaleVector, this->currentTime,
+                                            scaleVector, duration);
 }
 
-void Sprite::scale(Vector scalevector, Time duration)
+float Sprite::getRotation()
 {
-    return this->scalevector.changeVal(scalevector, this->currentTime, duration);
+    return this->rotation.getVal();
 }
-
-void Sprite::scaleTo(Vector scalevector, Time duration)
-{
-    return this->scalevector.setVal(scalevector, this->currentTime, duration);
-}
-
-float Sprite::getRotation(Time currentTime)
-{
-    if (currentTime == -1)
-        return this->rotation.getVal(this->currentTime);
-    else
-        return this->rotation.getVal(currentTime);
-}
-
-void Sprite::rotate(float rotation, Time duration)
-{
-    return this->rotation.changeVal(rotation, this->currentTime, duration);
-}
-
 void Sprite::rotateTo(float rotation, Time duration)
 {
-    return this->rotation.setVal(rotation, this->currentTime, duration);
+    if (this->rotation_mover != NULL)
+    {
+        this->rotation_mover->updateValue(this->currentTime);
+        delete this->rotation_mover;
+    }
+
+    if (duration <= 0.0)
+    {
+        this->rotation.forceTo(rotation);
+        return;
+    }
+    
+    this->rotation_mover = new Mover<float>(this->rotation_behaviour,
+                                            &this->rotation, this->currentTime,
+                                            rotation, duration);
 }
 
-Color Sprite::getColor(Time currentTime)
+Color Sprite::getColor()
 {
-    if (currentTime == -1)
-        return this->color.getVal(this->currentTime);
-    else
-        return this->color.getVal(currentTime);
+    return this->color.getVal();
 }
-
-void Sprite::fade(Color color, Time duration)
-{
-    return this->color.changeVal(color, this->currentTime, duration);
-}
-
 void Sprite::fadeTo(Color color, Time duration)
 {
-    return this->color.setVal(color, this->currentTime, duration);
+    if (this->color_mover != NULL)
+    {
+        this->color_mover->updateValue(this->currentTime);
+        delete this->color_mover;
+    }
+
+    if (duration <= 0.0)
+    {
+        this->color.forceTo(color);
+        return;
+    }
+    
+    this->color_mover = new Mover<Color>(this->color_behaviour,
+                                            &this->color, this->currentTime,
+                                            color, duration);
 }
         

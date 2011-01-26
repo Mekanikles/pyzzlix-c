@@ -5,6 +5,9 @@
 #include "sprite.h"
 
 Scene::Scene():
+    realTime(0.0),
+    currentTime(0.0),
+    oldTime(0.0),
     renderBlocker(false),
     updateBlocker(false)
 {
@@ -15,10 +18,16 @@ Scene::~Scene()
     delete this->sprites;
 }
 
-void Scene::update(Time deltaTime)
+void Scene::updateTimer(Time deltaTime)
 {
-    this->currentTime += deltaTime;
-    this->renderTime = this->currentTime;
+    this->realTime += deltaTime;
+}
+
+void Scene::updateLogic(Time frameLength)
+{
+    this->oldTime = this->currentTime;
+    this->currentTime += frameLength;
+
     Sprite* s = this->sprites->first;
     while (s != NULL)
     {
