@@ -2,8 +2,6 @@
 
 #include <stdio.h>
 #include "animation.h"
-#include "movebehaviour.h"
-#include "mover.h"
 
 Sprite::Sprite(Time currentTime):
     softblend(false),         
@@ -13,20 +11,19 @@ Sprite::Sprite(Time currentTime):
     currentAnimation(NULL), 
     center(Point(0.0, 0.0)),
     position(Point(0.0, 0.0)),
-    scaleVector(Vector(1.0, 1.0)),
+    scale(Vector(1.0, 1.0)),
     color(Color(1.0f, 1.0f, 1.0f, 1.0f)),
-    rotation(0.0f)
+    rotation(0.0f),
+    ival_position(NULL),
+    ival_scale(NULL), 
+    ival_color(NULL), 
+    ival_rotation(NULL),
+    position_inter(NULL),
+    scale_inter(NULL), 
+    color_inter(NULL),
+    rotation_inter(NULL)
 {
 
-    position_behaviour = new MoveBehaviour_Decelerator(2);
-    scale_behaviour = new MoveBehaviour();
-    color_behaviour = new MoveBehaviour();
-    rotation_behaviour = new MoveBehaviour();
-
-    position_mover = NULL;
-    scale_mover = NULL;
-    color_mover = NULL;
-    rotation_mover = NULL;
 }
 
 Sprite::~Sprite()
@@ -63,8 +60,6 @@ void Sprite::removeSprite(Sprite* sprite)
     }
 }
 
-
-
 void Sprite::setImage(Image* image)
 {
     this->currentImage = image;
@@ -86,6 +81,7 @@ void Sprite::update(Time currentTime)
         this->currentImage = this->currentAnimation->getFrameImage(this->currentTime);
 
     // Update all movers
+    /*
     if (this->position_mover != NULL)
         position_mover->updateValue(this->currentTime);
     
@@ -97,7 +93,8 @@ void Sprite::update(Time currentTime)
 
     if (this->rotation_mover != NULL)
         rotation_mover->updateValue(this->currentTime);
-    
+    */
+        
     Sprite* s = this->subSprites->first;
     while (s != NULL)
     {
@@ -106,95 +103,120 @@ void Sprite::update(Time currentTime)
     }
 }
 
-Point Sprite::getPosition()
+Point Sprite::getPosition(Time time)
 {
-    return this->position.getVal();
+    if (this->ival_position != NULL)
+        return this->ival_position->getVal(time);
+    return position;
 }
 void Sprite::moveTo(Point position, Time duration)
 {
-    if (this->position_mover != NULL)
+    if (this->ival_position != NULL)
     {
-        this->position_mover->updateValue(this->currentTime);
-        delete this->position_mover;
+        this->position = ival_position->getVal(this->currentTime);
+        delete this->ival_position;
+        this->ival_position = NULL;
     }
 
     if (duration <= 0.0)
     {
-        this->position.forceTo(position);
+        this->position = position;
         return;
     }
+
+    if (position_inter == NULL)
+    {
+        position_inter = new Interpolation_Linear();
+    }
     
-    this->position_mover = new Mover<Point>(this->position_behaviour,
-                                            &this->position, this->currentTime,
-                                            position, duration);
+    this->ival_position = new MovingValue<Point>(this->currentTime, this->position, position, duration, position_inter);
 }
 
-Vector Sprite::getScale()
+Vector Sprite::getScale(Time time)
 {
-    return this->scaleVector.getVal();
+    if (this->ival_scale != NULL)
+        return this->ival_scale->getVal(time);
+    return scale;
 }
-void Sprite::scaleTo(Vector scaleVector, Time duration)
+void Sprite::scaleTo(Vector scale, Time duration)
 {
-    if (this->scale_mover != NULL)
+    if (this->ival_scale != NULL)
     {
-        this->scale_mover->updateValue(this->currentTime);
-        delete this->scale_mover;
+        this->scale = ival_scale->getVal(this->currentTime);
+        delete this->ival_scale;
+        this->ival_scale = NULL;
     }
 
     if (duration <= 0.0)
     {
-        this->scaleVector.forceTo(scaleVector);
+        this->scale = scale;
         return;
     }
-    
-    this->scale_mover = new Mover<Vector>(this->scale_behaviour,
-                                            &this->scaleVector, this->currentTime,
-                                            scaleVector, duration);
-}
 
-float Sprite::getRotation()
+    if (scale_inter == NULL)
+    {
+        scale_inter = new Interpolation_Linear();
+    }
+        
+    this->ival_scale = new MovingValue<Vector>(this->currentTime, this->scale, scale, duration, scale_inter);
+}
+    
+float Sprite::getRotation(Time time)
 {
-    return this->rotation.getVal();
+    if (this->ival_rotation != NULL)
+        return this->ival_rotation->getVal(time);
+    return rotation;
+
 }
 void Sprite::rotateTo(float rotation, Time duration)
 {
-    if (this->rotation_mover != NULL)
+    if (this->ival_rotation != NULL)
     {
-        this->rotation_mover->updateValue(this->currentTime);
-        delete this->rotation_mover;
+        this->rotation = ival_rotation->getVal(this->currentTime);
+        delete this->ival_rotation;
+        this->ival_rotation = NULL;
     }
 
     if (duration <= 0.0)
     {
-        this->rotation.forceTo(rotation);
+        this->rotation = rotation;
         return;
     }
-    
-    this->rotation_mover = new Mover<float>(this->rotation_behaviour,
-                                            &this->rotation, this->currentTime,
-                                            rotation, duration);
+
+    if (rotation_inter == NULL)
+    {
+        rotation_inter = new Interpolation_Linear();
+    }
+       
+    this->ival_rotation = new MovingValue<float>(this->currentTime, this->rotation,  rotation, duration, rotation_inter);
 }
 
-Color Sprite::getColor()
+Color Sprite::getColor(Time time)
 {
-    return this->color.getVal();
+    if (this->ival_color != NULL)
+        return this->ival_color->getVal(time);
+    return color;
 }
 void Sprite::fadeTo(Color color, Time duration)
 {
-    if (this->color_mover != NULL)
+    if (this->ival_color != NULL)
     {
-        this->color_mover->updateValue(this->currentTime);
-        delete this->color_mover;
+        this->color = ival_color->getVal(this->currentTime);
+        delete this->ival_color;
+        this->ival_color = NULL;
     }
 
     if (duration <= 0.0)
     {
-        this->color.forceTo(color);
+        this->color = color;
         return;
     }
-    
-    this->color_mover = new Mover<Color>(this->color_behaviour,
-                                            &this->color, this->currentTime,
-                                            color, duration);
+
+    if (color_inter == NULL)
+    {
+        color_inter = new Interpolation_Linear();
+    }
+        
+    this->ival_color = new MovingValue<Color>(this->currentTime, this->color, color, duration, color_inter);
 }
         

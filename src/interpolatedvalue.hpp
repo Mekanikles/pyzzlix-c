@@ -1,63 +1,65 @@
 
 template <typename T>
-InterpolatedValue<T>::InterpolatedValue()
+InterpolatedValue<T>::InterpolatedValue(Interpolation* inter) :
+    inter(inter)
 {
 }
 
 template <typename T>
-InterpolatedValue<T>::InterpolatedValue(const T& val):
-    oldVal(val), newVal(val)
+MovingValue<T>::MovingValue(Time startTime, T startVal, T goalVal, Time duration, Interpolation* inter) : InterpolatedValue<T>(inter), startTime(startTime), startVal(startVal), goalVal(goalVal), goalTime(startTime + duration)
 {
+
+}
+
+
+template <typename T>
+T MovingValue<T>::getVal(Time time)
+{
+    float progress = this->inter->getProgress(this->startTime, this->goalTime, time);
+    return startVal + (goalVal - startVal) * progress;
 }
 
 template <typename T>
-T InterpolatedValue<T>::getVal()
+WaypointedValue<T>::WaypointedValue(Interpolation* inter) : InterpolatedValue<T>(inter)
 {
-    return this->newVal;
+    
 }
 
 template <typename T>
-T InterpolatedValue<T>::calcVal(float factor)
+T WaypointedValue<T>::getVal(Time time)
 {
-    return this->newVal - (this->newVal - this->oldVal) * (1.0 - factor);
-}
-
-template <typename T>
-void InterpolatedValue<T>::setTo(T val)
-{
-    this->oldVal = this->newVal;
-    this->newVal = val;
-}
-
-template <typename T>
-void InterpolatedValue<T>::forceTo(T val)
-{
-    this->oldVal = val;
-    this->newVal = val;
-}
-
-template <typename T>
-void InterpolatedValue<T>::setOldVal(T val)
-{
-    this->oldVal = val;
-}
-
-template <typename T>
-void InterpolatedValue<T>::setNewVal(T val)
-{
-    this->newVal = val;
-}
-
-template <typename T>
-void InterpolatedValue<T>::addWaypoint(T val, Time time)
-{
-
 
 }
 
 template <typename T>
-void InterpolatedValue<T>::clearWaypoints()
+void WaypointedValue<T>::addWaypoint(T val, Time time)
 {
 
+}
+
+template <typename T>
+void WaypointedValue<T>::clearWaypoints()
+{
 
 }
+
+template <typename T>
+SplinedValue<T>::SplinedValue(Interpolation* inter) : WaypointedValue<T>(inter)
+{
+
+}
+
+template <typename T>
+T SplinedValue<T>::getVal(Time time)
+{
+
+}
+
+
+
+
+
+
+
+
+

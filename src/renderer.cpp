@@ -88,7 +88,7 @@ void Renderer::toggleFullScreen()
     this->setFullscreen(!this->fullscreen);
 }
 
-void Renderer::drawSprite(Sprite* sprite, float progress)
+void Renderer::drawSprite(Sprite* sprite, Time time)
 {
     if (sprite->currentImage == NULL && sprite->subSprites == NULL)
         return;
@@ -97,13 +97,13 @@ void Renderer::drawSprite(Sprite* sprite, float progress)
 
     //Point p = sprite->position.getVal();
     
-    Point p = sprite->position.calcVal(progress);
+    Point p = sprite->getPosition(time);
     
     glTranslatef(p.x, p.y, 0.0f);
-    glRotatef(sprite->rotation.calcVal(progress), 0.0f, 0.0f, 1.0f);
-    Vector s = sprite->scaleVector.calcVal(progress);
+    glRotatef(sprite->getRotation(time), 0.0f, 0.0f, 1.0f);
+    Vector s = sprite->getScale(time);
     glScalef(s.x, s.y, 1.0f);
-    Color c = sprite->color.calcVal(progress);
+    Color c = sprite->getColor(time);
     glColor4f(c.r, c.g, c.b, c.a);
 
 
@@ -138,7 +138,7 @@ void Renderer::drawSprite(Sprite* sprite, float progress)
         Sprite* s = sprite->subSprites->first;
         while(s != NULL)
         {
-            this->drawSprite(s, progress);
+            this->drawSprite(s, time);
             s = s->next;
         }
         
@@ -152,14 +152,12 @@ void Renderer::renderScene(Scene* scene)
     Sprite* s = scene->sprites->first;
     while(s != NULL)
     {
-        Time progress = (scene->realTime - scene->oldTime) / (scene->currentTime - scene->oldTime);
-              
-        this->drawSprite(s, progress);
+        this->drawSprite(s, scene->realTime);
         
         //fprintf(stderr, "Render: (%f : %f)\n", scene->realTime, scene->currentTime);
         if (scene->realTime > scene->currentTime)
         {
-            fprintf(stderr, "    RENDERTIME > CURRENTIME!\n");
+            //fprintf(stderr, "    RENDERTIME > CURRENTIME! (%f > %f)\n", scene->realTime, scene->currentTime);
         }
         s = s->next;
     }

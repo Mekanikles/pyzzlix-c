@@ -32,7 +32,7 @@ public:
     void setFullscreen(bool value = false);
     void toggleFullScreen();
     
-    void drawSprite(Sprite* sprite, float factor);
+    void drawSprite(Sprite* sprite, Time time);
     void renderScene(Scene* scene);
     void render(Time deltaTime);
         

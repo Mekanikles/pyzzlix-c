@@ -93,7 +93,7 @@ int main(int argc, char** argv)
     while (!done)
     {
         // Update all timers
-        time = glfwGetTime() * 1.3;
+        time = glfwGetTime() * 1.0;
         sceneHandler->updateTimers(time - lastupdatetime);
         lastupdatetime = time;
 
@@ -101,9 +101,7 @@ int main(int argc, char** argv)
         
         if (time >= nextupdatetime)
         {
-            // Run all scenes, one tick "ahead" of real time
             sceneHandler->tickScenes(logicLength);
-            
             nextupdatetime += logicLength;
             
             renderer->render(0);
@@ -125,7 +123,7 @@ int main(int argc, char** argv)
         }
         
         fflush(stderr);    
-        glfwSleep(1.0/60.0);
+        //glfwSleep(1.0/10.0);
     }
     
     

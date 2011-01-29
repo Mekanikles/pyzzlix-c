@@ -7,13 +7,11 @@
 #include "color.h"
 #include "time.h"
 
-#include "mover.h"
-
 #include "interpolatedvalue.h"
 
 struct Image;
 class Animation;
-class MoveBehaviour;
+class Interpolation;
 
 class Sprite : public Linkable<Sprite>
 {
@@ -27,20 +25,20 @@ class Sprite : public Linkable<Sprite>
         Animation* currentAnimation;
         Point center;
 
-        InterpolatedValue<Point> position;
-        InterpolatedValue<Vector> scaleVector;
-        InterpolatedValue<Color> color;
-        InterpolatedValue<float> rotation;
+        Point position;
+        Vector scale;
+        Color color;
+        float rotation;
+        
+        InterpolatedValue<Point>* ival_position;
+        InterpolatedValue<Vector>* ival_scale;
+        InterpolatedValue<Color>* ival_color;
+        InterpolatedValue<float>* ival_rotation;
 
-        MoveBehaviour* position_behaviour;
-        MoveBehaviour* scale_behaviour;
-        MoveBehaviour* color_behaviour;
-        MoveBehaviour* rotation_behaviour;
-
-        Mover<Point>* position_mover;
-        Mover<Vector>* scale_mover;
-        Mover<Color>* color_mover;
-        Mover<float>* rotation_mover;
+        Interpolation* position_inter;
+        Interpolation* scale_inter;
+        Interpolation* color_inter;
+        Interpolation* rotation_inter;
         
         Sprite(Time currentTime = 0);
         virtual ~Sprite();
@@ -51,16 +49,16 @@ class Sprite : public Linkable<Sprite>
         void setImage(Image* image);
         void setAnimation(Animation* animation);
         
-        Point getPosition();
+        Point getPosition(Time time = 0.0);
         void moveTo(Point position, Time duration = 0.0);
 
-        Vector getScale();
+        Vector getScale(Time time = 0.0);
         void scaleTo(Vector scale, Time duration = 0.0);    
 
-        float getRotation();
+        float getRotation(Time time = 0.0);
         void rotateTo(float rotation, Time duration = 0.0);
 
-        Color getColor();
+        Color getColor(Time time = 0.0);
         void fadeTo(Color color, Time duration = 0.0);
         
         void update(Time currentTime);

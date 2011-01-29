@@ -27,6 +27,8 @@ void Scene::updateLogic(Time frameLength)
 {
     this->oldTime = this->currentTime;
     this->currentTime += frameLength;
+    //this->currentTime = this->realTime;
+    this->realTime = this->currentTime;
 
     Sprite* s = this->sprites->first;
     while (s != NULL)
