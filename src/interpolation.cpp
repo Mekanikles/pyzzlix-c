@@ -82,7 +82,7 @@ float Interpolation_Accelerated::getProgress(Time startTime, Time goalTime, Time
 
 float Interpolation_Decelerated::getProgress(Time startTime, Time goalTime, Time currentTime)
 {
-    return 1.0 - pow(this->calcProgress(startTime, goalTime, currentTime), 2);
+    return -1.0 * pow(1.0 - this->calcProgress(startTime, goalTime, currentTime), 2) + 1.0;
 };
 
 

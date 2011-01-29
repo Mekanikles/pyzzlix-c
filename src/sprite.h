@@ -46,6 +46,11 @@ class Sprite : public Linkable<Sprite>
         void addSprite(Sprite* sprite);
         void removeSprite(Sprite* sprite);
         
+        void setPositionInterpolation(Interpolation* inter);
+        void setScaleInterpolation(Interpolation* inter);
+        void setRotationInterpolation(Interpolation* inter);
+        void setColorInterpolation(Interpolation* inter);
+        
         void setImage(Image* image);
         void setAnimation(Animation* animation);
         

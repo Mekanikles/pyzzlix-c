@@ -13,29 +13,27 @@ SceneHandler* SceneHandler::getInstance()
 
 SceneHandler::SceneHandler()
 {
-    this->sceneStack = new FastLinkedList<Scene>();
 }
 SceneHandler::~SceneHandler()
 {
     // Since scenes are singletons
     // Make sure scenes are not auto-deleted
     Scene* n;
-    Scene* s = this->sceneStack->first;
+    Scene* s = this->sceneStack.first;
     while (s != NULL)
     {
         n = s->next;
 
-        this->sceneStack->releaseLink(s);
+        this->sceneStack.releaseLink(s);
         
         s = n;
     }
-    delete this->sceneStack;
 }
 
 Scene* SceneHandler::getDeepestRenderedScene()
 {
     Scene* deepest = NULL;
-    Scene* s = this->sceneStack->first;
+    Scene* s = this->sceneStack.first;
     while (s != NULL)
     {
         deepest = s;
@@ -55,13 +53,13 @@ void SceneHandler::pushScene(Scene* scene)
         scene->list->releaseLink(scene);
     }
 
-    this->sceneStack->addLink(scene);
+    this->sceneStack.addLink(scene);
 }
 
 void SceneHandler::removeScene(Scene* scene)
 {
-    if (scene->list == this->sceneStack)
-        this->sceneStack->releaseLink(scene);
+    if (scene->list == &this->sceneStack)
+        this->sceneStack.releaseLink(scene);
     else
         fprintf(stderr, "Tried to remove scene from wrong list!\n");
 }
@@ -70,7 +68,7 @@ void SceneHandler::updateTimers(Time deltaTime)
 {
     bool blocked = false;
 
-    Scene* s = this->sceneStack->first;
+    Scene* s = this->sceneStack.first;
     while (s != NULL)
     {
         if (!blocked)
@@ -93,7 +91,7 @@ void SceneHandler::updateTimers(Time deltaTime)
 void SceneHandler::tickScenes(Time frameLength)
 {
     // Update all objects in scenes
-    Scene* s = this->sceneStack->first;
+    Scene* s = this->sceneStack.first;
     while (s != NULL)
     {
         s->updateLogic(frameLength);
@@ -105,7 +103,7 @@ void SceneHandler::tickScenes(Time frameLength)
     }
     
     // Do scene ticks
-    s = this->sceneStack->first;
+    s = this->sceneStack.first;
     while (s != NULL)
     {
         s->tick();
@@ -117,9 +115,27 @@ void SceneHandler::tickScenes(Time frameLength)
     }
 }
 
+void SceneHandler::queueEvent(Event* event)
+{
+    this->eventQueue.addLinkLast(event);
+}
+
+void SceneHandler::handleQueuedEvents()
+{
+    Event* e = this->eventQueue.first;
+    Event* next = NULL;
+    while (e != NULL)
+    {
+        next = e->next;
+        this->eventQueue.releaseLink(e);
+        this->handleEvent(e);
+        e = next;
+    }
+}
+
 void SceneHandler::handleEvent(Event* event)
 {
-    Scene* s = this->sceneStack->first;
+    Scene* s = this->sceneStack.first;
     while (s != NULL)
     {
         if (s->handleEvent(event) || s->isUpdateBlocker())
@@ -130,3 +146,4 @@ void SceneHandler::handleEvent(Event* event)
 
     delete event;
 }
+

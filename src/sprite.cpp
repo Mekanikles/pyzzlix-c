@@ -60,6 +60,31 @@ void Sprite::removeSprite(Sprite* sprite)
     }
 }
 
+void Sprite::setPositionInterpolation(Interpolation* inter)
+{
+    if (this->position_inter != NULL) 
+        delete this->position_inter; 
+    this->position_inter = inter;
+}
+void Sprite::setScaleInterpolation(Interpolation* inter)
+{
+    if (this->scale_inter!= NULL) 
+        delete this->scale_inter; 
+    this->scale_inter = inter;
+}       
+void Sprite::setRotationInterpolation(Interpolation* inter)
+{
+    if (this->rotation_inter != NULL) 
+        delete this->rotation_inter; 
+    this->rotation_inter = inter;
+}
+void Sprite::setColorInterpolation(Interpolation* inter)
+{
+    if (this->color_inter != NULL) 
+        delete this->color_inter; 
+    this->color_inter = inter;
+}
+
 void Sprite::setImage(Image* image)
 {
     this->currentImage = image;

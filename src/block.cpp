@@ -1,6 +1,7 @@
 #include "block.h"
 
 #include "animation.h"
+#include "interpolation.h"
 
 Block::Block(int boardx, int boardy, int type, Time currentTime):
     Sprite(currentTime),
@@ -26,6 +27,8 @@ Block::Block(int boardx, int boardy, int type, Time currentTime):
     
     this->setAnimation(this->normalAnimation);
     this->center = Point(size * 0.5f, size * 0.5f);
+    
+    this->setPositionInterpolation(new Interpolation_Decelerated());
 
 }
 

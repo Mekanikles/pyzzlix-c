@@ -9,7 +9,7 @@ const int EVENT_NONE = 0;
 const int EVENT_KEY = 1;
 const int EVENT_CIRCLE = 2;
 
-struct Event
+struct Event : public Linkable<Event>
 {
         int type;
 

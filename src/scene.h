@@ -16,7 +16,7 @@ class Scene : public Linkable<Scene>
         Time realTime;
         
         Time currentTime;
-        Time oldTime;
+        Time predictedNextTime;
         bool renderBlocker;
         bool updateBlocker;
         

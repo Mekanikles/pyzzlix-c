@@ -2,6 +2,7 @@
 
 
 #include "animation.h"
+#include "interpolation.h"
 
 Marker::Marker()
 {
@@ -15,4 +16,6 @@ Marker::Marker()
     //self.failsound = Resources().getSound("markerfail")  
 
     this->center = Point(16.0f, 16.0f);
+    
+    this->setPositionInterpolation(new Interpolation_Decelerated());
 }

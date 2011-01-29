@@ -12,8 +12,9 @@ class SceneHandler
 {
     public:
         
-        FastLinkedList<Scene>* sceneStack;
-        
+        FastLinkedList<Scene> sceneStack;
+        FastLinkedList<Event> eventQueue;
+
         static SceneHandler* getInstance();
         
         SceneHandler();
@@ -26,7 +27,9 @@ class SceneHandler
         void updateTimers(Time deltaTime);
         void tickScenes(Time frameLength);
         
-        void handleEvent(Event* event);  
+        void queueEvent(Event* event);
+        void handleEvent(Event* event);
+        void handleQueuedEvents();
 };
 
 #endif

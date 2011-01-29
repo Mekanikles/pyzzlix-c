@@ -1,6 +1,6 @@
-PROGRAM=pyzzlix.exe
+PROGRAM=$(ROOTPATH)/bin/pyzzlix
 CXX=g++
-SDK= /cygdrive/c/SDK
+SDK= /cygdrive/d/SDK
 
 include ../deps.mk
 
@@ -10,7 +10,6 @@ INCPATHS=
 LIBS=
 OBJECTS=
 
-
 CXXFLAGS+=-g -mno-cygwin -Wall
 
 LIBPATHS+=-L$(SDK)/glfw/lib/win32
@@ -18,19 +17,17 @@ INCPATHS+=-I. -I$(SDK)/glfw/include
 
 LIBS+=-lglfw -lOpengl32
 
-OBJECTS=$(SOURCE:.cpp=.o)
-
+OBJECTS=$(REALSOURCE:.cpp=.o)
 
 all: $(PROGRAM)
 
 
-%.o: $(SRCPATH)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCPATHS) -c $< -o $@
-
-
-$(PROGRAM): $(OBJECTS) $(REALDEPS)
+$(PROGRAM): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(LIBPATHS) $(INCPATHS) $(OBJECTS) $(LIBS)  -o $(PROGRAM)
 
+
+%.o: %.cpp  $(REALDEPS)
+	$(CXX) $(CXXFLAGS) $(INCPATHS) -c $< -o $@
 
 clean:
 	rm -f $(OBJECTS) $(PROGRAM)

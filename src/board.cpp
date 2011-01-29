@@ -36,18 +36,13 @@ Board::Board(int width, int height) : Sprite(),
     this->glow->setImage(Resources::getInstance()->getImage("windowglows", 24, 0, 176, 232));
     Interpolation* behv = new Interpolation_Hybrid();
     behv->setMode(INTERPOLATION_MODE_PINGPONG);
-    this->glow->color_inter = behv;
+    this->glow->setColorInterpolation(behv);
     this->glow->moveTo(Point(0.0, 0.0));
     this->glow->color = Color(0.0, 0.0, 0.0, 1.0);
     this->glow->fadeTo(Color(1.0, 0.7, 0.2, 1.0), 1.0);
         
     this->marker = new Marker();
-    behv = new Interpolation_Hybrid();
-    behv->setMode(INTERPOLATION_MODE_PINGPONG);
-    this->marker->position_inter = behv;
-    //this->setMarkerInGrid(this->width / 2, this->height / 2);
-    this->setMarkerInGrid(1, 1);
-    this->moveMarkerInGrid(this->width - 1, this->height - 1);    
+    this->setMarkerInGrid(this->width / 2, this->height / 2);
         
     this->addSprite(this->background);
     this->addSprite(this->marker);
@@ -56,11 +51,6 @@ Board::Board(int width, int height) : Sprite(),
     this->border->addSprite(this->glow);
 
     this->reset();
-
-
-    this->rotation_inter = behv;
-    this->rotateTo(-170);
-    this->rotateTo(170, 5.0);
     
     fprintf(stderr, "Board (%i, %i) created.\n", this->width, this->height);
 }
@@ -125,7 +115,7 @@ void Board::moveMarkerInGrid(int boardx, int boardy)
     this->marker->boardy = boardy;
 
     this->marker->moveTo(Point(boardx * this->gridSlotSize,
-                         boardy * this->gridSlotSize), 4.05);
+                         boardy * this->gridSlotSize), 0.05);
 }
 
 void Board::setMarkerInGrid(int boardx, int boardy)

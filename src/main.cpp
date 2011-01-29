@@ -37,7 +37,7 @@ void GLFWCALL keyCallback(int key, int action)
     }
     else
     {
-        sceneHandler->handleEvent(new KeyEvent(key, (action == GLFW_PRESS)));
+        sceneHandler->queueEvent(new KeyEvent(key, (action == GLFW_PRESS)));
     }
 }
  
@@ -101,9 +101,9 @@ int main(int argc, char** argv)
         
         if (time >= nextupdatetime)
         {
+            sceneHandler->handleQueuedEvents();
             sceneHandler->tickScenes(logicLength);
             nextupdatetime += logicLength;
-            
             renderer->render(0);
             lastrendertime = time;
             fpscounter += 1;
