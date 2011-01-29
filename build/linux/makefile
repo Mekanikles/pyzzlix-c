@@ -9,7 +9,7 @@ INCPATHS=
 LIBS=
 OBJECTS=
 
-CXXFLAGS+=-g -Wall
+CXXFLAGS+= -g -Wall
 
 LIBPATHS+=-L/usr/local/lib
 INCPATHS+=-I. -I/usr/local/include

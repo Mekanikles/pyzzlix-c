@@ -3,12 +3,13 @@
 
 #include "sprite.h"
 #include "time.h"
-
+class FrameSet;
 
 class Marker : public Sprite
 {
     public:
         Marker();
+        ~Marker();
 
         void setOffset(const Vector& offset);
                
@@ -22,6 +23,8 @@ class Marker : public Sprite
         
         Vector offset;
         Vector size;
+        
+        FrameSet* frameSet;
         //Sound* moveSound;
         //Sound* turnSound;
         //Sound* failSound;

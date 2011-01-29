@@ -16,7 +16,7 @@ Sprite::Sprite(Time currentTime):
     rotation(0.0f),
     ival_position(NULL),
     ival_scale(NULL), 
-    ival_color(NULL), 
+    ival_color(NULL),
     ival_rotation(NULL),
     position_inter(NULL),
     scale_inter(NULL), 
@@ -28,6 +28,10 @@ Sprite::Sprite(Time currentTime):
 
 Sprite::~Sprite()
 {
+
+
+
+
     delete this->subSprites;
 }
 
@@ -90,11 +94,25 @@ void Sprite::setImage(Image* image)
     this->currentImage = image;
 }
 
-void Sprite::setAnimation(Animation* animation)
+void Sprite::animate(FrameSet* frameSet, Time duration, Interpolation* inter)
 {
-    animation->reset(this->currentTime);
-    this->currentAnimation = animation;
-    this->currentImage = animation->getFrameImage(this->currentTime);
+    if (this->currentAnimation != NULL)
+    {
+        delete this->currentAnimation;
+        this->currentAnimation = NULL;
+    }
+    
+    if (duration <= 0.0)
+    {
+        FrameSet::Frame* frame = frameSet->getFrame(0);
+        if (frame != NULL)
+            this->currentImage = frame->image;    
+    }
+    else
+    {
+        this->currentAnimation = new Animation(frameSet, this->currentTime, duration, inter);
+        this->currentImage = this->currentAnimation->getFrameImage(this->currentTime);
+    }
 }
 
 void Sprite::update(Time currentTime)

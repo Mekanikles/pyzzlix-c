@@ -3,6 +3,11 @@
 #include "animation.h"
 #include "interpolation.h"
 
+#include "stdio.h"
+
+Interpolation_Linear blink_inter;
+Interpolation_Linear pulse_inter;
+
 Block::Block(int boardx, int boardy, int type, Time currentTime):
     Sprite(currentTime),
     type(type),
@@ -15,36 +20,41 @@ Block::Block(int boardx, int boardy, int type, Time currentTime):
 {
     int size = 16;
     
-    this->blinkAnimation = new Animation("blocks",
-         size, size, this->type * size, 0, size, 6 * size, 0.015, ANIMATION_MODE_LOOP);
-    
-    this->pulseAnimation = new Animation("blocks",
-         size, size, this->type * size, 0, size, 6 * size, 0.015, ANIMATION_MODE_PINGPONGLOOP);
-    
-    this->normalAnimation = new Animation("blocks",
-         size, size, this->type * size, 0, size, size, 0, ANIMATION_MODE_NORMAL);
-
-    
-    this->setAnimation(this->normalAnimation);
     this->center = Point(size * 0.5f, size * 0.5f);
     
     this->setPositionInterpolation(new Interpolation_Decelerated());
+       
+    this->animationFrameSet = new FrameSet("blocks",
+         size, size, this->type * size, 0, size, 6 * size);
+         
+    this->normalFrameSet = new FrameSet("blocks",
+         size, size, this->type * size, 0, size, size);        
+    
+    blink_inter.setMode(INTERPOLATION_MODE_LOOP);
+    pulse_inter.setMode(INTERPOLATION_MODE_PINGPONG);
+    
+    this->doNormal();
+}
 
+Block::~Block()
+{
+    delete this->animationFrameSet;
+    delete this->normalFrameSet;
 }
 
 void Block::doPulse()
 {
-    this->setAnimation(this->pulseAnimation);
+    this->animate(this->animationFrameSet, 0.1, &pulse_inter);
 }
 
 void Block::doBlink()
 {
-    this->setAnimation(this->blinkAnimation);
+    this->animate(this->animationFrameSet, 0.1, &blink_inter);
 }
 
 void Block::doNormal()
 {
-    this->setAnimation(this->normalAnimation);
+    this->animate(this->normalFrameSet);
 }
 
 void Block::animatePopup()

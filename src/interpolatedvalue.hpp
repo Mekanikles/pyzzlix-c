@@ -1,12 +1,14 @@
 
 template <typename T>
-InterpolatedValue<T>::InterpolatedValue(Interpolation* inter) :
+InterpolatedValue<T>::InterpolatedValue(const Interpolation* inter) :
     inter(inter)
 {
+    if (inter == NULL)
+        inter = &interpolation_default;
 }
 
 template <typename T>
-MovingValue<T>::MovingValue(Time startTime, T startVal, T goalVal, Time duration, Interpolation* inter) : InterpolatedValue<T>(inter), startTime(startTime), startVal(startVal), goalVal(goalVal), goalTime(startTime + duration)
+MovingValue<T>::MovingValue(Time startTime, T startVal, T goalVal, Time duration, const Interpolation* inter) : InterpolatedValue<T>(inter), startTime(startTime), startVal(startVal), goalVal(goalVal), goalTime(startTime + duration)
 {
 
 }

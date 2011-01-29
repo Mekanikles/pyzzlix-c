@@ -7,6 +7,7 @@
 #include "vector.h"
 #include "sprite.h"
 
+class FrameSet;
 class Animation;
 
 const int BLOCKTYPE_HEART = 0;
@@ -30,10 +31,9 @@ class Block : public Sprite
 {
     public:        
         int type;
-        Animation* blinkAnimation;
-        Animation* pulseAnimation;
-        Animation* normalAnimation;
-
+        FrameSet* animationFrameSet;
+        FrameSet* normalFrameSet;
+        
         float gravityDelay;
         int status;
    
@@ -41,7 +41,8 @@ class Block : public Sprite
         int layer;
 
         Block(int boardx, int boardy, int type, Time currentTime);
-    
+        ~Block();
+        
         void doPulse();      
         void doBlink();
         void doNormal();

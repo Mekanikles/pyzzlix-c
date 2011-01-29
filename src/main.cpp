@@ -43,7 +43,6 @@ void GLFWCALL keyCallback(int key, int action)
  
 bool init()
 {
-
     glfwInit();
     
     renderer->init("Pyzzlix", 1280, 720, false);

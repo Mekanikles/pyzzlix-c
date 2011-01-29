@@ -3,7 +3,9 @@
 #include "math.h"
 #include "stdio.h"
 
-float Interpolation::calcProgress(Time startTime, Time goalTime, Time currentTime)
+const Interpolation_Linear interpolation_default;
+
+float Interpolation::calcProgress(Time startTime, Time goalTime, Time currentTime) const
 {
     Time length = (goalTime - startTime);
     
@@ -69,24 +71,24 @@ Interpolation_Hybrid::Interpolation_Hybrid() : Interpolation()
 {
 }
 
-float Interpolation_Linear::getProgress(Time startTime, Time goalTime, Time currentTime)
+float Interpolation_Linear::getProgress(Time startTime, Time goalTime, Time currentTime) const
 {
     return calcProgress(startTime, goalTime, currentTime);
 };
 
 
-float Interpolation_Accelerated::getProgress(Time startTime, Time goalTime, Time currentTime)
+float Interpolation_Accelerated::getProgress(Time startTime, Time goalTime, Time currentTime) const
 {
     return pow(this->calcProgress(startTime, goalTime, currentTime), 2);
 };
 
-float Interpolation_Decelerated::getProgress(Time startTime, Time goalTime, Time currentTime)
+float Interpolation_Decelerated::getProgress(Time startTime, Time goalTime, Time currentTime) const
 {
     return -1.0 * pow(1.0 - this->calcProgress(startTime, goalTime, currentTime), 2) + 1.0;
 };
 
 
-float Interpolation_Hybrid::getProgress(Time startTime, Time goalTime, Time currentTime)
+float Interpolation_Hybrid::getProgress(Time startTime, Time goalTime, Time currentTime) const
 {
     float progress = this->calcProgress(startTime, goalTime, currentTime);
 

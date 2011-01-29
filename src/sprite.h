@@ -10,6 +10,7 @@
 #include "interpolatedvalue.h"
 
 struct Image;
+class FrameSet;
 class Animation;
 class Interpolation;
 
@@ -52,7 +53,7 @@ class Sprite : public Linkable<Sprite>
         void setColorInterpolation(Interpolation* inter);
         
         void setImage(Image* image);
-        void setAnimation(Animation* animation);
+        void animate(FrameSet* frameSet, Time duration = 0.0, Interpolation* inter = NULL);
         
         Point getPosition(Time time = 0.0);
         void moveTo(Point position, Time duration = 0.0);

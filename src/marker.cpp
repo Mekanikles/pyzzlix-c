@@ -6,7 +6,8 @@
 
 Marker::Marker()
 {
-    this->setAnimation(new Animation("marker", 32, 32));
+    this->frameSet = new FrameSet("marker", 32, 32);
+    this->animate(this->frameSet, 1.0);
     
     this->boardx = 0;
     this->boardy = 0;
@@ -18,4 +19,9 @@ Marker::Marker()
     this->center = Point(16.0f, 16.0f);
     
     this->setPositionInterpolation(new Interpolation_Decelerated());
+}
+
+Marker::~Marker()
+{
+    delete this->frameSet;
 }

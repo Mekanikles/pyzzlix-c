@@ -1,144 +1,63 @@
 #include "animation.h"
 
 #include "resources.h"
+#include "interpolation.h"
 
-Animation::Animation(const string& texturename, int width, int height,
-    int srcx, int srcy, int srcw, int srch, Time frameLength, int mode, bool reverse)
+Animation::Animation(FrameSet* frameSet, Time startTime, Time duration, const Interpolation* inter) : 
+                    frameSet(frameSet), startTime(startTime), stopTime(startTime + duration), inter(inter)
 {
-    if (mode == ANIMATION_MODE_LOOP ||
-        mode == ANIMATION_MODE_PINGPONG ||
-        mode == ANIMATION_MODE_PINGPONGLOOP ||
-        mode == ANIMATION_MODE_NORMAL)
-    {
-        this->mode = mode;
-    }
-    else
-    {
-        this->mode = ANIMATION_MODE_NORMAL;
-    }
+    this->frameTimer = 0.0;
+    this->frameIndex = 0;
     
-    this->reverse = reverse;
-    
-    this->images = Resources::getInstance()->getImageSheet(&this->frameCount,
-        texturename, width, height,  srcx, srcy, srcw, srch);
-    
-    if (this->frameCount)
-    {
-        this->frameLengths = new Time[this->frameCount];
-        for (int i = 0; i < this->frameCount; i++)
-        {
-            this->frameLengths[i] = frameLength;
-        }
-    }
-    else
-    {
-        this->frameLengths = NULL;
-    }
-
-    this->reset(0.0);
+    if (this->inter == NULL)
+        this->inter = &interpolation_default;
 }
 
 Animation::~Animation()
 {
-    if (this->images != NULL)
-        delete[] this->images;
-
-    if (this->frameLengths != NULL)
-        delete[] this->frameLengths;
 }
 
-
-void Animation::reset(Time currentTime)
-{
-    this->frameTimer = currentTime;
-    
-    if (this->reverse == true)
-    {
-        this->direction = -1;
-        this->currentFrame = this->frameCount - 1;
-    }
-    else
-    {
-        this->direction = 1;
-        this->currentFrame = 0;
-    }
-}
 
 Image* Animation::getFrameImage(Time currentTime)
 {
-    if (this->frameCount <= 0)
+    if (this->frameSet->frameCount <= 0)
         return NULL;
     
-    while (this->direction != 0 && this->frameTimer + this->frameLengths[this->currentFrame] <= currentTime)
+    float progress = this->inter->getProgress(this->startTime, this->stopTime, currentTime);
+
+    if (progress <= this->frameSet->getFrame(0)->length)
     {
-        this->frameTimer += this->frameLengths[this->currentFrame];
-        this->currentFrame += 1 * this->direction;
-        if (this->currentFrame >= this->frameCount)
+        this->frameIndex = 0;
+        this->frameTimer = 0.0;
+        return this->frameSet->getFrame(0)->image;
+    }
+    else if (progress >= 1.0 - this->frameSet->getFrame(this->frameSet->getFrameCount() - 1)->length)
+    {
+        this->frameIndex = this->frameSet->getFrameCount() - 1;
+        this->frameTimer = 1.0 - this->frameSet->getFrame(this->frameIndex)->length;
+        return this->frameSet->getFrame(this->frameIndex)->image;
+    }
+
+    if (progress >= this->frameTimer)
+    {
+        // Search forward
+        while (this->frameTimer + this->frameSet->getFrame(this->frameIndex)->length < progress)
         {
-            if (this->mode == ANIMATION_MODE_LOOP)
-            {
-                this->currentFrame = 0;
-            }
-            else if (this->mode == ANIMATION_MODE_PINGPONG)
-            {
-                if (!this->reverse)
-                {
-                    this->currentFrame = this->frameCount - 1;
-                    this->direction = -1;
-                }
-                else
-                {
-                    this->direction = 0;
-                    this->currentFrame = 0;
-                    break;
-                }
-            }
-            else if (this->mode == ANIMATION_MODE_PINGPONGLOOP)
-            {
-                this->currentFrame = this->frameCount - 1;
-                this->direction = -1;
-            }
-            else
-            {
-                this->direction = 0;
-                this->currentFrame = this->frameCount - 1;
-                break;
-            }
+            this->frameTimer += this->frameSet->getFrame(this->frameIndex)->length;
+            this->frameIndex++;
         }
-        else if (this->currentFrame < 0)
+    }
+    else
+    {
+        // Search backward
+        while (this->frameTimer > progress)
         {
-            if (this->mode == ANIMATION_MODE_LOOP)
-            {
-                this->currentFrame = this->frameCount - 1;                 
-            }
-            else if (this->mode == ANIMATION_MODE_PINGPONG)
-            {
-                if (!this->reverse)
-                {
-                    this->direction = 0;
-                    this->currentFrame = 0;
-                    break;
-                }
-                else
-                {
-                    this->currentFrame = 0;
-                    this->direction = 1;
-                }
-            }
-            else if (this->mode == ANIMATION_MODE_PINGPONGLOOP)
-            {
-                this->currentFrame = 0;
-                this->direction = 1;
-            }
-            else
-            {
-                this->direction = 0;
-                this->currentFrame = 0;
-                break;
-            }
+            this->frameIndex--;
+            this->frameTimer -= this->frameSet->getFrame(frameIndex)->length;
         }
-    }      
-    return this->images[this->currentFrame];
+    }
+ 
+    return this->frameSet->getFrame(this->frameIndex)->image;
 }
   
 

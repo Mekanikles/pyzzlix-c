@@ -10,9 +10,9 @@ template <typename T>
 class InterpolatedValue
 {
     public:
-        Interpolation* inter;
+        const Interpolation* inter;
 
-        InterpolatedValue(Interpolation* inter);
+        InterpolatedValue(const Interpolation* inter);
         virtual T getVal(Time time) = 0;
 };
 
@@ -24,7 +24,7 @@ class MovingValue : public InterpolatedValue<T>
         T startVal;
         T goalVal;
         Time goalTime;
-        MovingValue(Time startTime, T startVal, T goalVal, Time duration = 0.0, Interpolation* inter = NULL);
+        MovingValue(Time startTime, T startVal, T goalVal, Time duration = 0.0, const Interpolation* inter = NULL);
         T getVal(Time time);
 };
 
