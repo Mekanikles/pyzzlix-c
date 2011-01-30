@@ -2,19 +2,21 @@
 #define _FRAMESET_H
 
 #include "image.h"
+
 #include "time.h"
 
+struct Frame
+{
+        Image* image;
+        Time length;
+        Frame() : image(NULL), length(0.0) {}
+        Frame(Image* image, Time length): image(image), length(length) {}
+};
 
 class FrameSet
 {
 public:
-    struct Frame
-    {
-        Frame() : image(NULL), length(0.0) {}
-        Frame(Image* image, Time length): image(image), length(length) {}
-        Image* image;
-        Time length;
-    };
+
 
     Frame* frames;
     int frameCount;

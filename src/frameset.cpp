@@ -60,7 +60,7 @@ int FrameSet::getFrameCount()
     return this->frameCount;
 }
     
-FrameSet::Frame* FrameSet::getFrame(int index)
+Frame* FrameSet::getFrame(int index)
 {   
     if (index >= 0 && index < this->frameCount)
         return &this->frames[index];

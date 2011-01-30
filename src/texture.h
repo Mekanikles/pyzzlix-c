@@ -48,7 +48,13 @@ struct Texture
     }
 
     Texture(string name):
-        name(name)
+        name(name),
+        img(NULL),      
+        texID(-1),
+        width(0),
+        height(0),
+        pw(0.0),
+        ph(0.0)
     {
         this->updateData(-1, NULL);
     }

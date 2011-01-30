@@ -15,7 +15,7 @@ KeyMap* KeyMap::getInstance()
         
 unsigned int KeyMap::getKey(unsigned int id)
 {
-    if (id > keyArray.size())
+    if (id >= keyArray.size())
     {
         return KEY_UNDEFINED;
     }
@@ -27,7 +27,7 @@ void KeyMap::setKey(unsigned int id, unsigned int key)
 {
     if (id >= keyArray.size())
     {
-        keyArray.resize(id);
+        keyArray.resize(id + 1);
     }
 
     keyArray[id] = key;

@@ -1,9 +1,6 @@
-#ifndef _TIME_H
-#define _TIME_H
-
-
+#ifndef PYZZLIX_TIME_H
+#define PYZZLIX_TIME_H
 
 typedef double Time;
-
 
 #endif

@@ -104,7 +104,7 @@ void Sprite::animate(FrameSet* frameSet, Time duration, Interpolation* inter)
     
     if (duration <= 0.0)
     {
-        FrameSet::Frame* frame = frameSet->getFrame(0);
+        Frame* frame = frameSet->getFrame(0);
         if (frame != NULL)
             this->currentImage = frame->image;    
     }
